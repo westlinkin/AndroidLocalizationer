@@ -39,10 +39,9 @@
   <actions>
     <!-- Add your actions here -->
     <group id="AL.Localize" text="_Localize" description="Localize strings" >
-      <add-to-group group-id="EditorPopupMenu"/>
       <add-to-group group-id="ProjectViewPopupMenu"/>
 
-      <action id="AL.Convert" class="ConvertToOtherLanguages" text="Convert to other languages"
+      <action id="AL.Convert" class="action.ConvertToOtherLanguages" text="Convert to other languages"
               description="Convert this strings.xml to other languages that can be used to localize your Android app.">
 
       </action>

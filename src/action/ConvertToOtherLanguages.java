@@ -1,5 +1,8 @@
+package action;
+
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.DataConstants;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
@@ -8,22 +11,52 @@ import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
+import module.AndroidString;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by Wesley on 11/26/14.
  */
 public class ConvertToOtherLanguages extends AnAction {
     public void actionPerformed(AnActionEvent e) {
-        // TODO: insert action logic here
+
+        VirtualFile clickedFile = (VirtualFile) e.getDataContext().getData(DataConstants.VIRTUAL_FILE);
+        if (clickedFile.getExtension() == null || !clickedFile.getExtension().equals("xml")) {
+            showErrorDialog("Not a strings.xml file");
+            return;
+        }
+
+        List<AndroidString> androidStrings = null;
+        try {
+             androidStrings = AndroidString.getAndroidStringsList(clickedFile.contentsToByteArray());
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        if (androidStrings == null || androidStrings.isEmpty()) {
+            showErrorDialog("Not a strings.xml file");
+            return;
+        }
+
+        for (AndroidString androidString : androidStrings)
+            System.out.println(androidString);
+
+
+
+
+
         final Project project = e.getProject();
         if (project == null) {
             return;
         }
+
+
         Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+
+
         if (editor == null) {
             return;
         }
@@ -35,6 +68,9 @@ public class ConvertToOtherLanguages extends AnAction {
         if (virtualFile == null) {
             return;
         }
+
+
+
         final String contents;
         try {
             BufferedReader br = new BufferedReader(new FileReader(virtualFile.getPath()));
@@ -65,5 +101,10 @@ public class ConvertToOtherLanguages extends AnAction {
                 }, "DiskRead", null);
             }
         });
+    }
+
+    private void showErrorDialog(String msg) {
+        System.out.println("show error dialog: " + msg);
+        // todo
     }
 }
