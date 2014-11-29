@@ -3,26 +3,24 @@ package action;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataConstants;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.command.CommandProcessor;
-import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import module.AndroidString;
+import ui.MultiSelectDialog;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
 /**
  * Created by Wesley on 11/26/14.
  */
-public class ConvertToOtherLanguages extends AnAction {
+public class ConvertToOtherLanguages extends AnAction implements MultiSelectDialog.OnOKClickedListener{
+    private static final String LOCALIZATION_TITLE = "Choose alternative string resources";
+    private static final String LOCALIZATION_MSG = "Warning: " +
+            "The string resources are translated by Google Translation API, " +
+            "try keeping your string resources simple, so that the result is more satisfied.";
+
     public void actionPerformed(AnActionEvent e) {
 
         final Project project = e.getProject();
@@ -51,59 +49,18 @@ public class ConvertToOtherLanguages extends AnAction {
             System.out.println(androidString);
 
 
+        // show dialog
+        MultiSelectDialog multiSelectDialog = new MultiSelectDialog(project, LOCALIZATION_MSG,
+                LOCALIZATION_TITLE, null, false);
+        multiSelectDialog.setOnOKClickedListener(this);
+        multiSelectDialog.show();
 
+    }
 
-
-
-
-
-        Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
-
-
-        if (editor == null) {
-            return;
-        }
-        final Document document = editor.getDocument();
-        if (document == null) {
-            return;
-        }
-        VirtualFile virtualFile = FileDocumentManager.getInstance().getFile(document);
-        if (virtualFile == null) {
-            return;
-        }
-
-
-
-        final String contents;
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(virtualFile.getPath()));
-            String currentLine;
-            StringBuilder stringBuilder = new StringBuilder();
-            while ((currentLine = br.readLine()) != null) {
-                stringBuilder.append(currentLine);
-                stringBuilder.append("\n");
-            }
-            contents = stringBuilder.toString();
-        } catch (IOException e1) {
-            return;
-        }
-        final Runnable readRunner = new Runnable() {
-            @Override
-            public void run() {
-                document.setText(contents);
-            }
-        };
-        ApplicationManager.getApplication().invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                CommandProcessor.getInstance().executeCommand(project, new Runnable() {
-                    @Override
-                    public void run() {
-                        ApplicationManager.getApplication().runWriteAction(readRunner);
-                    }
-                }, "DiskRead", null);
-            }
-        });
+    @Override
+    public void onClick() {
+        //todo: handle multi selected result
+        System.out.println("onClick");
     }
 
     private void showErrorDialog(Project project, String msg) {
