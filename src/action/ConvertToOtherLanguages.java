@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import module.AndroidString;
 
@@ -24,9 +25,14 @@ import java.util.List;
 public class ConvertToOtherLanguages extends AnAction {
     public void actionPerformed(AnActionEvent e) {
 
+        final Project project = e.getProject();
+        if (project == null) {
+            return;
+        }
+
         VirtualFile clickedFile = (VirtualFile) e.getDataContext().getData(DataConstants.VIRTUAL_FILE);
         if (clickedFile.getExtension() == null || !clickedFile.getExtension().equals("xml")) {
-            showErrorDialog("Not a strings.xml file");
+            showErrorDialog(project, "Target file is not Android resource.");
             return;
         }
 
@@ -37,7 +43,7 @@ public class ConvertToOtherLanguages extends AnAction {
             e1.printStackTrace();
         }
         if (androidStrings == null || androidStrings.isEmpty()) {
-            showErrorDialog("Not a strings.xml file");
+            showErrorDialog(project, "Target file does not contain any strings.");
             return;
         }
 
@@ -48,10 +54,7 @@ public class ConvertToOtherLanguages extends AnAction {
 
 
 
-        final Project project = e.getProject();
-        if (project == null) {
-            return;
-        }
+
 
 
         Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
@@ -103,8 +106,7 @@ public class ConvertToOtherLanguages extends AnAction {
         });
     }
 
-    private void showErrorDialog(String msg) {
-        System.out.println("show error dialog: " + msg);
-        // todo
+    private void showErrorDialog(Project project, String msg) {
+        Messages.showErrorDialog(project, msg, "Error");
     }
 }

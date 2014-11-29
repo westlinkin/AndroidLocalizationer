@@ -1,19 +1,19 @@
 <idea-plugin version="2">
   <id>com.westlinkin.androidLocalizationer</id>
   <name>Android Localizationer</name>
-  <version>0.01</version>
-  <vendor email="westlinkin@gmail.com" >westkubjub</vendor>
+  <version>0.0.1</version>
+  <vendor email="westlinkin@gmail.com" >westlinkin</vendor>
 
   <description><![CDATA[
-      Enter short description for your plugin here.<br>
-      <em>most HTML tags may be used</em>
+      Help developers to localize their Android apps.<br><br>
+      Mostly use <a href="https://cloud.google.com/translate/docs">Google Translation API</a> to translate <b>strings</b> into other languages.
     ]]></description>
 
-  <change-notes><![CDATA[
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>
-    ]]>
-  </change-notes>
+  <!--<change-notes><![CDATA[-->
+      <!--Add change notes here.<br>-->
+      <!--<em>most HTML tags may be used</em>-->
+    <!--]]>-->
+  <!--</change-notes>-->
 
   <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
   <idea-version since-build="131"/>
