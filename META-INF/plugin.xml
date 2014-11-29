@@ -1,0 +1,53 @@
+<idea-plugin version="2">
+  <id>com.westlinkin.androidLocalizationer</id>
+  <name>Android Localizationer</name>
+  <version>0.01</version>
+  <vendor email="westlinkin@gmail.com" >westkubjub</vendor>
+
+  <description><![CDATA[
+      Enter short description for your plugin here.<br>
+      <em>most HTML tags may be used</em>
+    ]]></description>
+
+  <change-notes><![CDATA[
+      Add change notes here.<br>
+      <em>most HTML tags may be used</em>
+    ]]>
+  </change-notes>
+
+  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
+  <idea-version since-build="131"/>
+
+  <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Plugin+Compatibility+with+IntelliJ+Platform+Products
+       on how to target different products -->
+  <!-- uncomment to enable plugin in all products
+  <depends>com.intellij.modules.lang</depends>
+  -->
+
+  <extensions defaultExtensionNs="com.intellij">
+    <!-- Add your extensions here -->
+  </extensions>
+
+  <application-components>
+    <!-- Add your application components here -->
+  </application-components>
+
+  <project-components>
+    <!-- Add your project components here -->
+  </project-components>
+
+  <actions>
+    <!-- Add your actions here -->
+    <group id="AL.Localize" text="_Localize" description="Localize strings" >
+      <add-to-group group-id="EditorPopupMenu"/>
+      <add-to-group group-id="ProjectViewPopupMenu"/>
+
+      <action id="AL.Convert" class="ConvertToOtherLanguages" text="Convert to other languages"
+              description="Convert this strings.xml to other languages that can be used to localize your Android app.">
+
+      </action>
+    </group>
+
+  </actions>
+
+</idea-plugin>
