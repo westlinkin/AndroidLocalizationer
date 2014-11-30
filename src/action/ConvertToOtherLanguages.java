@@ -7,19 +7,24 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import module.AndroidString;
+import module.GoogleSupportedLanguages;
 import ui.MultiSelectDialog;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.List;
 
 /**
  * Created by Wesley on 11/26/14.
  */
-public class ConvertToOtherLanguages extends AnAction implements MultiSelectDialog.OnOKClickedListener{
+public class ConvertToOtherLanguages extends AnAction implements MultiSelectDialog.OnOKClickedListener,
+        ItemListener {
     private static final String LOCALIZATION_TITLE = "Choose alternative string resources";
     private static final String LOCALIZATION_MSG = "Warning: " +
             "The string resources are translated by Google Translation API, " +
             "try keeping your string resources simple, so that the result is more satisfied.";
+    private static final String OVERRIDE_EXITS_STRINGS = "Override the exiting strings";
 
     public void actionPerformed(AnActionEvent e) {
 
@@ -30,7 +35,7 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
 
         VirtualFile clickedFile = (VirtualFile) e.getDataContext().getData(DataConstants.VIRTUAL_FILE);
         if (clickedFile.getExtension() == null || !clickedFile.getExtension().equals("xml")) {
-            showErrorDialog(project, "Target file is not Android resource.");
+            showErrorDialog(project, "Target file is not an Android string resource.");
             return;
         }
 
@@ -50,17 +55,30 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
 
 
         // show dialog
-        MultiSelectDialog multiSelectDialog = new MultiSelectDialog(project, LOCALIZATION_MSG,
-                LOCALIZATION_TITLE, null, false);
+        MultiSelectDialog multiSelectDialog = new MultiSelectDialog(project,
+                LOCALIZATION_MSG,
+                LOCALIZATION_TITLE,
+                null,
+                OVERRIDE_EXITS_STRINGS,
+                false,
+                false);
         multiSelectDialog.setOnOKClickedListener(this);
+        multiSelectDialog.setCheckOnItemListener(this);
         multiSelectDialog.show();
 
     }
 
     @Override
-    public void onClick() {
+    public void onClick(List<GoogleSupportedLanguages> selectedLanguages) {
         //todo: handle multi selected result
-        System.out.println("onClick");
+        System.out.println("onClick, " + selectedLanguages.toString());
+    }
+
+    @Override
+    public void itemStateChanged(ItemEvent e) {
+        //todo: handle checkbox item listener,
+        // e.getStateChanged == ItemEvent.SELECTED, checked; e.getStateChanged == ItemEvent.DESELECTED, unchecked
+
     }
 
     private void showErrorDialog(Project project, String msg) {

@@ -1,5 +1,11 @@
 package module;
 
+import org.apache.velocity.runtime.directive.Foreach;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+
 /**
  * Created by Wesley on 11/29/14.
  */
@@ -13,8 +19,8 @@ public enum GoogleSupportedLanguages {
     Belarusian("be", "Беларускі"),
     Bulgarian("bg", "Български"),
     Catalan("ca", "Català"),
-    ChineseSimplified("zh-CN", "简体中文"),
-    ChineseTraditional("zh-TW", "正體中文"),
+    Chinese_Simplified("zh-CN", "简体中文"),
+    Chinese_Traditional("zh-TW", "正體中文"),
     Croatian("hr", "Hrvatski"),
     Czech("cs", "Čeština"),
     Danish("da", "Dansk"),
@@ -30,7 +36,7 @@ public enum GoogleSupportedLanguages {
     German("de", "Deutsch"),
     Greek("el", "Ελληνικά"),
     Gujarati("gu", "ગુજરાતી"),
-    HaitianCreole("ht", "Haitiancreole"),
+    Haitian_Creole("ht", "Haitiancreole"),
     Hebrew("iw", "עברית"),
     Hindi("hi", "हिंदी"),
     Hungarian("hu", "Magyar"),
@@ -84,5 +90,18 @@ public enum GoogleSupportedLanguages {
 
     public String getLanguageDisplayName() {
         return languageDisplayName;
+    }
+
+    public static List<GoogleSupportedLanguages> getAllSupportedLanguages() {
+        EnumSet<GoogleSupportedLanguages> all = EnumSet.allOf(GoogleSupportedLanguages.class);
+        List<GoogleSupportedLanguages> data = new ArrayList<GoogleSupportedLanguages>(all.size());
+        for (GoogleSupportedLanguages languages : all) {
+            data.add(languages);
+        }
+        return data;
+    }
+
+    public String toString() {
+        return name() + "(\"" + getLanguageCode() + "\", \"" + getLanguageDisplayName() + "\")";
     }
 }

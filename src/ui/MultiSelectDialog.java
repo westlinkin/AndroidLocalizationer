@@ -1,5 +1,7 @@
 package ui;
 
+import com.intellij.execution.ui.layout.Grid;
+import com.intellij.execution.ui.layout.GridCell;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -13,6 +15,8 @@ import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.mac.foundation.MacUtil;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.UIUtil;
+import module.AndroidString;
+import module.GoogleSupportedLanguages;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,7 +24,11 @@ import javax.swing.*;
 import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.text.html.HTMLEditorKit;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.lang.reflect.Method;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -32,78 +40,46 @@ public class MultiSelectDialog extends DialogWrapper {
     public static final double REVERSE_GOLDEN_RATIO = 1 - GOLDEN_RATIO;
 
     public interface OnOKClickedListener {
-        //todo: onClick, params should be multi selected GoogleSupportedLanguages
-        public void onClick();
+        public void onClick(List<GoogleSupportedLanguages> selectedLanguages);
     }
 
     protected String myMessage;
     protected Icon myIcon;
     private MyBorderLayout myLayout;
 
+    private JCheckBox myCheckBox;
+    private String myCheckboxText;
+    private boolean myChecked;
+
+    private java.util.List<GoogleSupportedLanguages> data = GoogleSupportedLanguages.getAllSupportedLanguages();
+    private java.util.List<GoogleSupportedLanguages> selectedLanguages = new ArrayList<GoogleSupportedLanguages>();
     private OnOKClickedListener onOKClickedListener;
 
     public void setOnOKClickedListener(OnOKClickedListener onOKClickedListener) {
         this.onOKClickedListener = onOKClickedListener;
     }
 
+    public void setCheckOnItemListener(ItemListener l) {
+        if (myCheckBox != null)
+            myCheckBox.addItemListener(l);
+    }
+
     public MultiSelectDialog(@Nullable Project project,
-                         String message,
-                         String title,
-                         @Nullable Icon icon,
-                         @Nullable DoNotAskOption doNotAskOption,
-                         boolean canBeParent) {
+                             String message,
+                             String title,
+                             @Nullable Icon icon,
+                             @Nullable String checkboxText,
+                             boolean checkboxStatus,
+                             boolean canBeParent) {
         super(project, canBeParent);
-        _init(title, message, icon, doNotAskOption);
-    }
-
-    public MultiSelectDialog(@Nullable Project project, String message, String title, @Nullable Icon icon,
-                         boolean canBeParent) {
-        super(project, canBeParent);
-        _init(title, message, icon, null);
-    }
-
-    public MultiSelectDialog(@NotNull Component parent, String message, String title, @Nullable Icon icon) {
-        this(parent, message, title, icon, false);
-    }
-
-    public MultiSelectDialog(@NotNull Component parent,
-                         String message,
-                         String title,
-                         @Nullable Icon icon,
-                         boolean canBeParent) {
-        super(parent, canBeParent);
-        _init(title, message, icon, null);
-    }
-
-    public MultiSelectDialog(String message, String title, int defaultOptionIndex, @Nullable Icon icon) {
-        this(message, title, defaultOptionIndex, icon, false);
-    }
-
-    public MultiSelectDialog(String message, String title, int defaultOptionIndex, @Nullable Icon icon, boolean canBeParent) {
-        super(canBeParent);
-        _init(title, message, icon, null);
-    }
-
-    public MultiSelectDialog(String message, String title, @Nullable Icon icon, @Nullable DoNotAskOption doNotAskOption) {
-        super(false);
-        _init(title, message, icon, doNotAskOption);
-    }
-
-    public MultiSelectDialog(String message, String title, int defaultOptionIndex, Icon icon, DoNotAskOption doNotAskOption) {
-        this(message, title, icon, doNotAskOption);
-    }
-
-    protected MultiSelectDialog() {
-        super(false);
-    }
-
-    protected MultiSelectDialog(Project project) {
-        super(project, false);
+        _init(title, message, icon, checkboxText, checkboxStatus, null);
     }
 
     protected void _init(String title,
                          String message,
                          @Nullable Icon icon,
+                         @Nullable String checkboxText,
+                         boolean checkboxStatus,
                          @Nullable DoNotAskOption doNotAskOption) {
         setTitle(title);
         if (Messages.isMacSheetEmulation()) {
@@ -111,11 +87,9 @@ public class MultiSelectDialog extends DialogWrapper {
         }
         myMessage = message;
         myIcon = icon;
-        if (SystemInfo.isMac) {
-            setButtonsAlignment(SwingConstants.RIGHT);
-        } else {
-            setButtonsAlignment(SwingConstants.LEFT);
-        }
+        myCheckboxText = checkboxText;
+        myChecked = checkboxStatus;
+        setButtonsAlignment(SwingConstants.RIGHT);
         setDoNotAskOption(doNotAskOption);
         init();
         if (Messages.isMacSheetEmulation()) {
@@ -127,7 +101,7 @@ public class MultiSelectDialog extends DialogWrapper {
     protected void doOKAction() {
         super.doOKAction();
         if (onOKClickedListener != null) {
-            onOKClickedListener.onClick();
+            onOKClickedListener.onClick(selectedLanguages);
         }
     }
 
@@ -254,16 +228,52 @@ public class MultiSelectDialog extends DialogWrapper {
                 pane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
                 pane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
                 pane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-                final int scrollSize = (int) new JScrollBar(Adjustable.VERTICAL).getPreferredSize().getWidth();
+                final int scrollSize = (int) new JScrollBar(Adjustable.VERTICAL).getPreferredSize().getWidth() + 12;
                 final Dimension preferredSize =
                         new Dimension(Math.min(textSize.width, (int)(screenSize.width * REVERSE_GOLDEN_RATIO)) + scrollSize,
                                 Math.min(textSize.height, screenSize.height / 3) + scrollSize);
                 pane.setPreferredSize(preferredSize);
-                panel.add(pane, BorderLayout.CENTER);
+                panel.add(pane, BorderLayout.NORTH);
             } else {
-                panel.add(messageComponent, BorderLayout.CENTER);
+                panel.add(messageComponent, BorderLayout.NORTH);
             }
         }
+
+        if (!data.isEmpty()) {
+            Container container = new Container();
+            int gridCol = 2;
+            int gridRow = (data.size() % gridCol == 0) ? data.size() / gridCol : data.size() / gridCol + 1;
+            container.setLayout(new GridLayout(gridRow, gridCol));
+            for (final GoogleSupportedLanguages language : data) {
+                JCheckBox checkbox = new JCheckBox(language.name() + " (" + language.getLanguageDisplayName() + ") ");
+                checkbox.addItemListener(new ItemListener() {
+                    @Override
+                    public void itemStateChanged(ItemEvent e) {
+                        if (e.getStateChange() == ItemEvent.SELECTED) {
+                            if (!selectedLanguages.contains(language)) {
+                                selectedLanguages.add(language);
+                            }
+                        } else if (e.getStateChange() == ItemEvent.DESELECTED) {
+                            if (selectedLanguages.contains(language)) {
+                                selectedLanguages.remove(language);
+                            }
+                        }
+                    }
+                });
+                container.add(checkbox);
+            }
+            panel.add(container, BorderLayout.CENTER);
+        }
+
+        if (myCheckboxText != null) {
+
+            myCheckBox = new JCheckBox(myCheckboxText);
+            myCheckBox.setSelected(myChecked);
+            myCheckBox.setMargin(new Insets(2, -4, 0, 0));
+
+            panel.add(myCheckBox, BorderLayout.SOUTH);
+        }
+
         return panel;
     }
 
