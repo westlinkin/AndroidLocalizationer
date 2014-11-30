@@ -1,34 +1,36 @@
 package action;
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataConstants;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
+import data.StorageDataKey;
 import module.AndroidString;
 import module.GoogleSupportedLanguages;
 import ui.MultiSelectDialog;
 
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.io.IOException;
 import java.util.List;
 
 /**
  * Created by Wesley on 11/26/14.
  */
-public class ConvertToOtherLanguages extends AnAction implements MultiSelectDialog.OnOKClickedListener,
-        ItemListener {
+public class ConvertToOtherLanguages extends AnAction implements MultiSelectDialog.OnOKClickedListener {
+
     private static final String LOCALIZATION_TITLE = "Choose alternative string resources";
     private static final String LOCALIZATION_MSG = "Warning: " +
             "The string resources are translated by Google Translation API, " +
             "try keeping your string resources simple, so that the result is more satisfied.";
     private static final String OVERRIDE_EXITS_STRINGS = "Override the exiting strings";
 
+    private Project project;
+
     public void actionPerformed(AnActionEvent e) {
 
-        final Project project = e.getProject();
+        project = e.getProject();
         if (project == null) {
             return;
         }
@@ -50,9 +52,8 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
             return;
         }
 
-        for (AndroidString androidString : androidStrings)
-            System.out.println(androidString);
-
+//        for (AndroidString androidString : androidStrings)
+//            System.out.println(androidString);
 
         // show dialog
         MultiSelectDialog multiSelectDialog = new MultiSelectDialog(project,
@@ -60,24 +61,27 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
                 LOCALIZATION_TITLE,
                 null,
                 OVERRIDE_EXITS_STRINGS,
-                false,
+                PropertiesComponent.getInstance(project).getBoolean(StorageDataKey.OverrideCheckBoxStatus, false),
                 false);
         multiSelectDialog.setOnOKClickedListener(this);
-        multiSelectDialog.setCheckOnItemListener(this);
         multiSelectDialog.show();
-
     }
 
     @Override
-    public void onClick(List<GoogleSupportedLanguages> selectedLanguages) {
+    public void onClick(List<GoogleSupportedLanguages> selectedLanguages, boolean overrideChecked) {
+        // set consistence data
+        PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
+        propertiesComponent.setValue(StorageDataKey.OverrideCheckBoxStatus, String.valueOf(overrideChecked));
+
+        List<GoogleSupportedLanguages> allData = GoogleSupportedLanguages.getAllSupportedLanguages();
+
+        for (GoogleSupportedLanguages language : allData) {
+            propertiesComponent.setValue(StorageDataKey.SupportedLanguageCheckStatusPrefix + language.getLanguageCode(),
+                    String.valueOf(selectedLanguages.contains(language)));
+        }
+
         //todo: handle multi selected result
         System.out.println("onClick, " + selectedLanguages.toString());
-    }
-
-    @Override
-    public void itemStateChanged(ItemEvent e) {
-        //todo: handle checkbox item listener,
-        // e.getStateChanged == ItemEvent.SELECTED, checked; e.getStateChanged == ItemEvent.DESELECTED, unchecked
 
     }
 

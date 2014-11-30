@@ -2,6 +2,7 @@ package ui;
 
 import com.intellij.execution.ui.layout.Grid;
 import com.intellij.execution.ui.layout.GridCell;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -15,6 +16,7 @@ import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.mac.foundation.MacUtil;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.UIUtil;
+import data.StorageDataKey;
 import module.AndroidString;
 import module.GoogleSupportedLanguages;
 import org.jetbrains.annotations.NotNull;
@@ -40,9 +42,10 @@ public class MultiSelectDialog extends DialogWrapper {
     public static final double REVERSE_GOLDEN_RATIO = 1 - GOLDEN_RATIO;
 
     public interface OnOKClickedListener {
-        public void onClick(List<GoogleSupportedLanguages> selectedLanguages);
+        public void onClick(List<GoogleSupportedLanguages> selectedLanguages, boolean overrideChecked);
     }
 
+    private PropertiesComponent propertiesComponent;
     protected String myMessage;
     protected Icon myIcon;
     private MyBorderLayout myLayout;
@@ -59,11 +62,6 @@ public class MultiSelectDialog extends DialogWrapper {
         this.onOKClickedListener = onOKClickedListener;
     }
 
-    public void setCheckOnItemListener(ItemListener l) {
-        if (myCheckBox != null)
-            myCheckBox.addItemListener(l);
-    }
-
     public MultiSelectDialog(@Nullable Project project,
                              String message,
                              String title,
@@ -72,10 +70,11 @@ public class MultiSelectDialog extends DialogWrapper {
                              boolean checkboxStatus,
                              boolean canBeParent) {
         super(project, canBeParent);
-        _init(title, message, icon, checkboxText, checkboxStatus, null);
+        _init(project, title, message, icon, checkboxText, checkboxStatus, null);
     }
 
-    protected void _init(String title,
+    protected void _init(Project project,
+                         String title,
                          String message,
                          @Nullable Icon icon,
                          @Nullable String checkboxText,
@@ -85,6 +84,7 @@ public class MultiSelectDialog extends DialogWrapper {
         if (Messages.isMacSheetEmulation()) {
             setUndecorated(true);
         }
+        propertiesComponent = PropertiesComponent.getInstance(project);
         myMessage = message;
         myIcon = icon;
         myCheckboxText = checkboxText;
@@ -101,7 +101,7 @@ public class MultiSelectDialog extends DialogWrapper {
     protected void doOKAction() {
         super.doOKAction();
         if (onOKClickedListener != null) {
-            onOKClickedListener.onClick(selectedLanguages);
+            onOKClickedListener.onClick(selectedLanguages, myCheckBox.isSelected());
         }
     }
 
@@ -260,6 +260,8 @@ public class MultiSelectDialog extends DialogWrapper {
                         }
                     }
                 });
+                checkbox.setSelected(
+                        propertiesComponent.getBoolean(StorageDataKey.SupportedLanguageCheckStatusPrefix + language.getLanguageCode(), false));
                 container.add(checkbox);
             }
             panel.add(container, BorderLayout.CENTER);
