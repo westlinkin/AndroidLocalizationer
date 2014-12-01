@@ -24,6 +24,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import data.StorageDataKey;
+import data.task.GetTranslationTask;
 import module.AndroidString;
 import module.GoogleSupportedLanguages;
 import ui.MultiSelectDialog;
@@ -43,6 +44,7 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
     private static final String OVERRIDE_EXITS_STRINGS = "Override the exiting strings";
 
     private Project project;
+    private List<AndroidString> androidStringsInStringFile = null;
 
     public void actionPerformed(AnActionEvent e) {
 
@@ -57,19 +59,16 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
             return;
         }
 
-        List<AndroidString> androidStrings = null;
+
         try {
-             androidStrings = AndroidString.getAndroidStringsList(clickedFile.contentsToByteArray());
+            androidStringsInStringFile = AndroidString.getAndroidStringsList(clickedFile.contentsToByteArray());
         } catch (IOException e1) {
             e1.printStackTrace();
         }
-        if (androidStrings == null || androidStrings.isEmpty()) {
+        if (androidStringsInStringFile == null || androidStringsInStringFile.isEmpty()) {
             showErrorDialog(project, "Target file does not contain any strings.");
             return;
         }
-
-//        for (AndroidString androidString : androidStrings)
-//            System.out.println(androidString);
 
         // show dialog
         MultiSelectDialog multiSelectDialog = new MultiSelectDialog(project,
@@ -97,8 +96,8 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
         }
 
         //todo: handle multi selected result
-        System.out.println("onClick, " + selectedLanguages.toString());
-
+        new GetTranslationTask(project, "Translation in progress", selectedLanguages, androidStringsInStringFile)
+                .queue();
     }
 
     private void showErrorDialog(Project project, String msg) {

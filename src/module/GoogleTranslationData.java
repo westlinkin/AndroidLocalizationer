@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package data;
+package module;
 
 /**
- * Created by Wesley Lin on 11/29/14.
+ * Created by Wesley Lin on 12/1/14.
  */
-public class Key {
-    public static final String GOOGLE_TRANSLATION_API_KEY = "AIzaSyDRSQOo27pYdt7rkluYsNO_wvwi8bg4gvk";
-
-    public static final String NO_NEED_TRANSLATION_ANDROID_STRING_PREFIX = "NAL_";
+public class GoogleTranslationData {
+    public GoogleTranslations[] translations;
 }

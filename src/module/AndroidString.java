@@ -94,20 +94,20 @@ public class AndroidString {
         return null;
     }
 
-    public static String[] getAndroidStringKeys(List<AndroidString> list) {
-        String[] result = new String[list.size()];
+    public static List<String> getAndroidStringKeys(List<AndroidString> list) {
+        List<String> result = new ArrayList<String>();
 
         for (int i = 0; i < list.size(); i++) {
-            result[i] = list.get(i).getKey();
+            result.add(list.get(i).getKey());
         }
         return result;
     }
 
-    public static String[] getAndroidStringValues(List<AndroidString> list) {
-        String[] result = new String[list.size()];
+    public static List<String> getAndroidStringValues(List<AndroidString> list) {
+        List<String> result = new ArrayList<String>();
 
         for (int i = 0; i < list.size(); i++) {
-            result[i] = list.get(i).getValue();
+            result.add(list.get(i).getValue());
         }
         return result;
     }
