@@ -1,5 +1,4 @@
 #Android Localizationer
-=====================
 
 This is a Android Studio/ IntelliJIdea plugin to localize your Android app, translate your string resources automactically.
 
