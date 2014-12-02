@@ -11,7 +11,7 @@ Translate all your strings in your string resources(e.g. `strings.xml`) to your 
 to<br>
 `<string name="NAL_flurry_id">FLURRY_ID</string>`
 
-More features are coming, please check [Todo](https://github.com/westlinkin/AndroidLocalizationer/blob/master/README.md#Todo).
+More features are coming, please check [Todo](https://github.com/westlinkin/AndroidLocalizationer#todo).
 
 
 ##Downloads
