@@ -3,15 +3,29 @@
 This is a Android Studio/ IntelliJIdea plugin to localize your Android app, translate your string resources automactically.
 
 
-##Features
+##Features & Usage
+Translate all your strings in your string resources(e.g. `strings.xml`) to your target languages automactically. Help developers localize their Android app easily, with just one click.
 
-##Usage
+* Filter the strings you don't wanna translate by adding `NAL_` prefix to the `string key`, case sensitive. Like changing: 
+`<string name="flurry_id">FLURRY_ID</string>`<br>
+to<br>
+`<string name="NAL_flurry_id">FLURRY_ID</string>`
+
+More features are coming, please check [Todo](https://github.com/westlinkin/AndroidLocalizationer/blob/master/README.md#Todo).
+
 
 ##Downloads
 
 ##Change Notes
 
 ##Todo
+* Multiple translation engine
+* Plugin Settings
+	* Choose the translation engine (translation API) you wanna use
+	* Set translation engine (translation API)'s application key, in case of the API is runing out of quota
+	* Filter the `string` key that you don't wanna translate, e.g. `app_name`, `some_api_key`
+* Only show the `Convert to other languages` in the popup menu when right clicking the string resources, like [Google's Translation Editor](http://tools.android.com/recent/androidstudio087released) does
+
 
 ##License
 
