@@ -22,7 +22,7 @@
 
   <description><![CDATA[
       Help developers to localize their Android apps.<br><br>
-      Mostly use <a href="https://cloud.google.com/translate/docs">Google Translation API</a> to translate <b>strings</b> into other languages.
+      Use multiple Translation APIs to translate <b>strings</b> into other languages.
     ]]></description>
 
   <!--<change-notes><![CDATA[-->

@@ -11,6 +11,10 @@ Translate all your strings in your string resources(e.g. `strings.xml`) to your 
 to<br>
 `<string name="NAL_flurry_id">FLURRY_ID</string>`
 
+####Warning
+* Currently, Android Localizationer only support translate **English** to other languages
+* The result may **not** be meet your standards due to the Translation API that this plugin is using.
+
 More features are coming, please check [Todo](https://github.com/westlinkin/AndroidLocalizationer#todo).
 
 
@@ -25,6 +29,7 @@ More features are coming, please check [Todo](https://github.com/westlinkin/Andr
 	* Set translation engine (translation API)'s application key, in case of the API is runing out of quota
 	* Filter the `string` key that you don't wanna translate, e.g. `app_name`, `some_api_key`
 * Only show the `Convert to other languages` in the popup menu when right clicking the string resources, like [Google's Translation Editor](http://tools.android.com/recent/androidstudio087released) does
+* Support more source languages
 
 
 ##License
