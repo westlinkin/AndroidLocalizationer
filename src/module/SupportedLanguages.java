@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package language_engine.google;
+package module;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Created by Wesley Lin on 11/29/14.
  */
-public enum GoogleSupportedLanguages {
+public enum SupportedLanguages {
     Afrikaans("af", "Afrikaans"),
     Albanian("sq", "Shqiptar"),
     Arabic("ar", "العربية"),
@@ -93,7 +93,7 @@ public enum GoogleSupportedLanguages {
     private String languageCode;
     private String languageDisplayName;
 
-    GoogleSupportedLanguages(String languageCode, String languageDisplayName) {
+    SupportedLanguages(String languageCode, String languageDisplayName) {
         this.languageCode = languageCode;
         this.languageDisplayName = languageDisplayName;
     }
@@ -106,10 +106,10 @@ public enum GoogleSupportedLanguages {
         return languageDisplayName;
     }
 
-    public static List<GoogleSupportedLanguages> getAllSupportedLanguages() {
-        EnumSet<GoogleSupportedLanguages> all = EnumSet.allOf(GoogleSupportedLanguages.class);
-        List<GoogleSupportedLanguages> data = new ArrayList<GoogleSupportedLanguages>(all.size());
-        for (GoogleSupportedLanguages languages : all) {
+    public static List<SupportedLanguages> getAllSupportedLanguages() {
+        EnumSet<SupportedLanguages> all = EnumSet.allOf(SupportedLanguages.class);
+        List<SupportedLanguages> data = new ArrayList<SupportedLanguages>(all.size());
+        for (SupportedLanguages languages : all) {
             data.add(languages);
         }
         return data;

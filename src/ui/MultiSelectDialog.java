@@ -31,7 +31,7 @@ import com.intellij.ui.mac.foundation.MacUtil;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.UIUtil;
 import data.StorageDataKey;
-import language_engine.google.GoogleSupportedLanguages;
+import module.SupportedLanguages;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,7 +55,7 @@ public class MultiSelectDialog extends DialogWrapper {
     public static final double REVERSE_GOLDEN_RATIO = 1 - GOLDEN_RATIO;
 
     public interface OnOKClickedListener {
-        public void onClick(List<GoogleSupportedLanguages> selectedLanguages, boolean overrideChecked);
+        public void onClick(List<SupportedLanguages> selectedLanguages, boolean overrideChecked);
     }
 
     private PropertiesComponent propertiesComponent;
@@ -67,8 +67,8 @@ public class MultiSelectDialog extends DialogWrapper {
     private String myCheckboxText;
     private boolean myChecked;
 
-    private java.util.List<GoogleSupportedLanguages> data = GoogleSupportedLanguages.getAllSupportedLanguages();
-    private java.util.List<GoogleSupportedLanguages> selectedLanguages = new ArrayList<GoogleSupportedLanguages>();
+    private java.util.List<SupportedLanguages> data = SupportedLanguages.getAllSupportedLanguages();
+    private java.util.List<SupportedLanguages> selectedLanguages = new ArrayList<SupportedLanguages>();
     private OnOKClickedListener onOKClickedListener;
 
     public void setOnOKClickedListener(OnOKClickedListener onOKClickedListener) {
@@ -257,7 +257,7 @@ public class MultiSelectDialog extends DialogWrapper {
             int gridCol = 2;
             int gridRow = (data.size() % gridCol == 0) ? data.size() / gridCol : data.size() / gridCol + 1;
             container.setLayout(new GridLayout(gridRow, gridCol));
-            for (final GoogleSupportedLanguages language : data) {
+            for (final SupportedLanguages language : data) {
                 JCheckBox checkbox = new JCheckBox(language.name() + " (" + language.getLanguageDisplayName() + ") ");
                 checkbox.addItemListener(new ItemListener() {
                     @Override

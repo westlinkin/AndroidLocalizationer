@@ -19,9 +19,9 @@ package data.task;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import data.GoogleTranslationApi;
+import language_engine.google.GoogleTranslationApi;
 import module.AndroidString;
-import language_engine.google.GoogleSupportedLanguages;
+import module.SupportedLanguages;
 import language_engine.google.GoogleTranslationJSON;
 
 import java.util.List;
@@ -31,12 +31,12 @@ import java.util.List;
  */
 public class GetTranslationTask extends Task.Backgroundable{
 
-    private List<GoogleSupportedLanguages> selectedLanguages;
+    private List<SupportedLanguages> selectedLanguages;
     private List<AndroidString> androidStrings;
     private double indicatorFractionFrame;
 
     public GetTranslationTask(Project project, String title,
-                              List<GoogleSupportedLanguages> selectedLanguages, List<AndroidString> androidStrings) {
+                              List<SupportedLanguages> selectedLanguages, List<AndroidString> androidStrings) {
         super(project, title);
         this.selectedLanguages = selectedLanguages;
         this.androidStrings = androidStrings;
@@ -45,10 +45,12 @@ public class GetTranslationTask extends Task.Backgroundable{
 
     @Override
     public void run(ProgressIndicator indicator) {
+        // todo: get choosed language engine
+
         for (int i = 0; i < selectedLanguages.size(); i++) {
-            GoogleSupportedLanguages language = selectedLanguages.get(i);
+            SupportedLanguages language = selectedLanguages.get(i);
             GoogleTranslationJSON json = GoogleTranslationApi.getTranslationJSON(AndroidString.getAndroidStringValues(androidStrings),
-                    language, GoogleSupportedLanguages.English);
+                    language, SupportedLanguages.English);
             indicator.setFraction(indicatorFractionFrame * (double)(i));
             indicator.setText("Translating to " + language.name() + " (" + language.getLanguageDisplayName() + ")");
 

@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-package data;
+package language_engine.google;
 
 import com.google.gson.Gson;
-import com.intellij.openapi.util.io.StreamUtil;
-import language_engine.google.GoogleSupportedLanguages;
-import language_engine.google.GoogleTranslationJSON;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import data.Key;
+import language_engine.HttpUtils;
+import module.SupportedLanguages;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URLEncoder;
@@ -37,22 +33,9 @@ import java.util.List;
 public class GoogleTranslationApi {
     public static final String BASE_TRANSLATION_URL = "https://www.googleapis.com/language/translate/v2?%s&target=%s&source=%s&key=%s";
 
-    private static String doGet(String url) {
-        try {
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(url);
-            HttpResponse resp = httpClient.execute(httpGet);
-
-            return StreamUtil.readText(resp.getEntity().getContent(), "UTF-8");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public static GoogleTranslationJSON getTranslationJSON(@NotNull List<String> querys,
-                                                @NotNull GoogleSupportedLanguages targetLanguageCode,
-                                                @NotNull GoogleSupportedLanguages sourceLanguageCode) {
+                                                @NotNull SupportedLanguages targetLanguageCode,
+                                                @NotNull SupportedLanguages sourceLanguageCode) {
         if (querys.isEmpty())
             return null;
         String query = "";
@@ -76,7 +59,7 @@ public class GoogleTranslationApi {
             return null;
 
         System.out.println("url: " + url);
-        String result = doGet(url);
+        String result = HttpUtils.doHttpGet(url);
         System.out.println("do get result: " + result);
         return new Gson().fromJson(result, GoogleTranslationJSON.class);
     }

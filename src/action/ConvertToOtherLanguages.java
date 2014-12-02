@@ -26,7 +26,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import data.StorageDataKey;
 import data.task.GetTranslationTask;
 import module.AndroidString;
-import language_engine.google.GoogleSupportedLanguages;
+import module.SupportedLanguages;
 import ui.MultiSelectDialog;
 
 import java.io.IOException;
@@ -83,19 +83,20 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
     }
 
     @Override
-    public void onClick(List<GoogleSupportedLanguages> selectedLanguages, boolean overrideChecked) {
+    public void onClick(List<SupportedLanguages> selectedLanguages, boolean overrideChecked) {
         // set consistence data
         PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
         propertiesComponent.setValue(StorageDataKey.OverrideCheckBoxStatus, String.valueOf(overrideChecked));
 
-        List<GoogleSupportedLanguages> allData = GoogleSupportedLanguages.getAllSupportedLanguages();
+        List<SupportedLanguages> allData = SupportedLanguages.getAllSupportedLanguages();
 
-        for (GoogleSupportedLanguages language : allData) {
+        for (SupportedLanguages language : allData) {
             propertiesComponent.setValue(StorageDataKey.SupportedLanguageCheckStatusPrefix + language.getLanguageCode(),
                     String.valueOf(selectedLanguages.contains(language)));
         }
 
-        //todo: handle multi selected result
+        // todo: handle multi selected result
+        // todo: title should adding using which language engine
         new GetTranslationTask(project, "Translation in progress", selectedLanguages, androidStringsInStringFile)
                 .queue();
     }
