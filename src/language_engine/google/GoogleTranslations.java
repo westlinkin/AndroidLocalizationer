@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package module;
+package language_engine.google;
 
 /**
  * Created by Wesley Lin on 12/1/14.
  */
-public class GoogleTranslationData {
-    public GoogleTranslations[] translations;
+public class GoogleTranslations {
+    public String translatedText;
 }

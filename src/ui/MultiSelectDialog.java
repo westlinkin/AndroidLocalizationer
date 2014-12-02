@@ -31,7 +31,7 @@ import com.intellij.ui.mac.foundation.MacUtil;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.UIUtil;
 import data.StorageDataKey;
-import module.GoogleSupportedLanguages;
+import language_engine.google.GoogleSupportedLanguages;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

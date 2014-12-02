@@ -18,8 +18,8 @@ package data;
 
 import com.google.gson.Gson;
 import com.intellij.openapi.util.io.StreamUtil;
-import module.GoogleSupportedLanguages;
-import module.GoogleTranslationJSON;
+import language_engine.google.GoogleSupportedLanguages;
+import language_engine.google.GoogleTranslationJSON;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;

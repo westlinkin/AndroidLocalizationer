@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package module;
+package language_engine.google;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -58,7 +58,7 @@ public enum GoogleSupportedLanguages {
     Indonesian("id", "Indonesia"),
     Irish("ga", "Irish"),
     Italian("it", "Italiano"),
-    Japanese("ja", "日本人"),
+    Japanese("ja", "日本語"),
     Kannada("kn", "ಕನ್ನಡ"),
     Korean("ko", "한국의"),
     Latin("la", "Latina"),

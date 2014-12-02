@@ -21,8 +21,8 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import data.GoogleTranslationApi;
 import module.AndroidString;
-import module.GoogleSupportedLanguages;
-import module.GoogleTranslationJSON;
+import language_engine.google.GoogleSupportedLanguages;
+import language_engine.google.GoogleTranslationJSON;
 
 import java.util.List;
 

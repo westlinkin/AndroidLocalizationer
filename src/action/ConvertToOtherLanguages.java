@@ -26,7 +26,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import data.StorageDataKey;
 import data.task.GetTranslationTask;
 import module.AndroidString;
-import module.GoogleSupportedLanguages;
+import language_engine.google.GoogleSupportedLanguages;
 import ui.MultiSelectDialog;
 
 import java.io.IOException;
