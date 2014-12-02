@@ -6,7 +6,7 @@ This is a Android Studio/ IntelliJIdea plugin to localize your Android app, tran
 ##Features & Usage
 Translate all your strings in your string resources(e.g. `strings.xml`) to your target languages automactically. Help developers localize their Android app easily, with just one click.
 
-* Filter the strings you don't wanna translate by adding `NAL_` prefix to the `string key`, case sensitive. Like changing: 
+* Filter the strings you don't wanna translate by adding `NAL_` prefix to the `string key`, case sensitive. Change:<br>
 `<string name="flurry_id">FLURRY_ID</string>`<br>
 to<br>
 `<string name="NAL_flurry_id">FLURRY_ID</string>`
