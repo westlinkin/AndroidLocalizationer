@@ -16,7 +16,6 @@
 
 package language_engine.google;
 
-import com.google.gson.Gson;
 import data.Key;
 import language_engine.HttpUtils;
 import module.SupportedLanguages;
@@ -31,9 +30,17 @@ import java.util.List;
  * Created by Wesley Lin on 12/1/14.
  */
 public class GoogleTranslationApi {
-    public static final String BASE_TRANSLATION_URL = "https://www.googleapis.com/language/translate/v2?%s&target=%s&source=%s&key=%s";
+    private static final String BASE_TRANSLATION_URL = "https://www.googleapis.com/language/translate/v2?%s&target=%s&source=%s&key=%s";
 
-    public static GoogleTranslationJSON getTranslationJSON(@NotNull List<String> querys,
+    /**
+     * not ready for now
+     * @param querys
+     * @param targetLanguageCode
+     * @param sourceLanguageCode
+     * @return
+     */
+    @Deprecated
+    public static String getTranslationJSON(@NotNull List<String> querys,
                                                 @NotNull SupportedLanguages targetLanguageCode,
                                                 @NotNull SupportedLanguages sourceLanguageCode) {
         if (querys.isEmpty())
@@ -61,7 +68,7 @@ public class GoogleTranslationApi {
         System.out.println("url: " + url);
         String result = HttpUtils.doHttpGet(url);
         System.out.println("do get result: " + result);
-        return new Gson().fromJson(result, GoogleTranslationJSON.class);
+        return result;
     }
 
 }

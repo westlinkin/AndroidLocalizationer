@@ -16,6 +16,8 @@
 
 package module;
 
+import language_engine.TranslationEngineType;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -92,10 +94,12 @@ public enum SupportedLanguages {
 
     private String languageCode;
     private String languageDisplayName;
+    private String languageEnglishDisplayName;
 
-    SupportedLanguages(String languageCode, String languageDisplayName) {
+    SupportedLanguages(String languageCode, String languageDisplayName, String languageEnglishDisplayName) {
         this.languageCode = languageCode;
         this.languageDisplayName = languageDisplayName;
+        this.languageEnglishDisplayName = languageEnglishDisplayName;
     }
 
     public String getLanguageCode() {
@@ -106,7 +110,12 @@ public enum SupportedLanguages {
         return languageDisplayName;
     }
 
-    public static List<SupportedLanguages> getAllSupportedLanguages() {
+    public String getLanguageEnglishDisplayName() {
+        return languageEnglishDisplayName;
+    }
+
+    // todo: add a parameter(@TranslationEngineType) to get supportedLanguages for certain api
+    public static List<SupportedLanguages> getAllSupportedLanguages(TranslationEngineType type) {
         EnumSet<SupportedLanguages> all = EnumSet.allOf(SupportedLanguages.class);
         List<SupportedLanguages> data = new ArrayList<SupportedLanguages>(all.size());
         for (SupportedLanguages languages : all) {
@@ -116,6 +125,6 @@ public enum SupportedLanguages {
     }
 
     public String toString() {
-        return name() + "(\"" + getLanguageCode() + "\", \"" + getLanguageDisplayName() + "\")";
+        return getLanguageEnglishDisplayName() + "(\"" + getLanguageCode() + "\", \"" + getLanguageDisplayName() + "\")";
     }
 }

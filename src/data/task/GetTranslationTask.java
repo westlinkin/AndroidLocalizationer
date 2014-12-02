@@ -19,10 +19,10 @@ package data.task;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
-import language_engine.google.GoogleTranslationApi;
+import language_engine.TranslationEngineType;
 import module.AndroidString;
 import module.SupportedLanguages;
-import language_engine.google.GoogleTranslationJSON;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -34,29 +34,50 @@ public class GetTranslationTask extends Task.Backgroundable{
     private List<SupportedLanguages> selectedLanguages;
     private List<AndroidString> androidStrings;
     private double indicatorFractionFrame;
+    private TranslationEngineType translationEngineType;
 
-    public GetTranslationTask(Project project, String title,
-                              List<SupportedLanguages> selectedLanguages, List<AndroidString> androidStrings) {
+    public GetTranslationTask(Project project, String title, List<SupportedLanguages> selectedLanguages,
+                              List<AndroidString> androidStrings, TranslationEngineType translationEngineType) {
         super(project, title);
         this.selectedLanguages = selectedLanguages;
         this.androidStrings = androidStrings;
+        this.translationEngineType = translationEngineType;
         this.indicatorFractionFrame = 1.0d / (double)(this.selectedLanguages.size());
     }
 
     @Override
     public void run(ProgressIndicator indicator) {
-        // todo: get choosed language engine
-
         for (int i = 0; i < selectedLanguages.size(); i++) {
             SupportedLanguages language = selectedLanguages.get(i);
-            GoogleTranslationJSON json = GoogleTranslationApi.getTranslationJSON(AndroidString.getAndroidStringValues(androidStrings),
-                    language, SupportedLanguages.English);
+            List<AndroidString> translationResult = getTranslationEngineResult(
+                    AndroidString.getAndroidStringValues(androidStrings),
+                    language,
+                    SupportedLanguages.English,
+                    translationEngineType
+            );
             indicator.setFraction(indicatorFractionFrame * (double)(i));
-            indicator.setText("Translating to " + language.name() + " (" + language.getLanguageDisplayName() + ")");
+            indicator.setText("Translating to " + language.getLanguageEnglishDisplayName()
+                    + " (" + language.getLanguageDisplayName() + ")");
 
             // todo: write to file
+
         }
     }
 
+    private List<AndroidString> getTranslationEngineResult(@NotNull List<String> querys,
+                                                           @NotNull SupportedLanguages targetLanguageCode,
+                                                           @NotNull SupportedLanguages sourceLanguageCode,
+                                                           TranslationEngineType translationEngineType) {
+        // todo
+        switch (translationEngineType) {
+            case Bing:
+
+                // return XXX
+                break;
+            case Google:
+                break;
+        }
+        return  null;
+    }
 
 }

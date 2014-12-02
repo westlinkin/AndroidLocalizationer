@@ -31,6 +31,7 @@ import com.intellij.ui.mac.foundation.MacUtil;
 import com.intellij.util.Alarm;
 import com.intellij.util.ui.UIUtil;
 import data.StorageDataKey;
+import language_engine.TranslationEngineType;
 import module.SupportedLanguages;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -67,7 +68,7 @@ public class MultiSelectDialog extends DialogWrapper {
     private String myCheckboxText;
     private boolean myChecked;
 
-    private java.util.List<SupportedLanguages> data = SupportedLanguages.getAllSupportedLanguages();
+    private java.util.List<SupportedLanguages> data;
     private java.util.List<SupportedLanguages> selectedLanguages = new ArrayList<SupportedLanguages>();
     private OnOKClickedListener onOKClickedListener;
 
@@ -81,8 +82,10 @@ public class MultiSelectDialog extends DialogWrapper {
                              @Nullable Icon icon,
                              @Nullable String checkboxText,
                              boolean checkboxStatus,
+                             TranslationEngineType translationEngineType,
                              boolean canBeParent) {
         super(project, canBeParent);
+        data = SupportedLanguages.getAllSupportedLanguages(translationEngineType);
         _init(project, title, message, icon, checkboxText, checkboxStatus, null);
     }
 
@@ -258,7 +261,8 @@ public class MultiSelectDialog extends DialogWrapper {
             int gridRow = (data.size() % gridCol == 0) ? data.size() / gridCol : data.size() / gridCol + 1;
             container.setLayout(new GridLayout(gridRow, gridCol));
             for (final SupportedLanguages language : data) {
-                JCheckBox checkbox = new JCheckBox(language.name() + " (" + language.getLanguageDisplayName() + ") ");
+                JCheckBox checkbox = new JCheckBox(language.getLanguageEnglishDisplayName()
+                        + " (" + language.getLanguageDisplayName() + ") ");
                 checkbox.addItemListener(new ItemListener() {
                     @Override
                     public void itemStateChanged(ItemEvent e) {

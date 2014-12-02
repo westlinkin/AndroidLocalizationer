@@ -25,6 +25,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import data.StorageDataKey;
 import data.task.GetTranslationTask;
+import language_engine.TranslationEngineType;
 import module.AndroidString;
 import module.SupportedLanguages;
 import ui.MultiSelectDialog;
@@ -46,6 +47,8 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
     private Project project;
     private List<AndroidString> androidStringsInStringFile = null;
 
+    public TranslationEngineType defaultTranslationEngine = TranslationEngineType.Bing;
+
     public void actionPerformed(AnActionEvent e) {
 
         project = e.getProject();
@@ -59,6 +62,7 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
             return;
         }
 
+        // todo: read settings, write @defaultTranslationEngine
 
         try {
             androidStringsInStringFile = AndroidString.getAndroidStringsList(clickedFile.contentsToByteArray());
@@ -77,6 +81,7 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
                 null,
                 OVERRIDE_EXITS_STRINGS,
                 PropertiesComponent.getInstance(project).getBoolean(StorageDataKey.OverrideCheckBoxStatus, false),
+                defaultTranslationEngine,
                 false);
         multiSelectDialog.setOnOKClickedListener(this);
         multiSelectDialog.show();
@@ -88,7 +93,7 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
         PropertiesComponent propertiesComponent = PropertiesComponent.getInstance(project);
         propertiesComponent.setValue(StorageDataKey.OverrideCheckBoxStatus, String.valueOf(overrideChecked));
 
-        List<SupportedLanguages> allData = SupportedLanguages.getAllSupportedLanguages();
+        List<SupportedLanguages> allData = SupportedLanguages.getAllSupportedLanguages(defaultTranslationEngine);
 
         for (SupportedLanguages language : allData) {
             propertiesComponent.setValue(StorageDataKey.SupportedLanguageCheckStatusPrefix + language.getLanguageCode(),

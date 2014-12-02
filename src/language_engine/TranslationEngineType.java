@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package language_engine.google;
+package language_engine;
 
 /**
- * Created by Wesley Lin on 12/1/14.
+ * Created by Wesley Lin on 12/2/14.
  */
-public class GoogleTranslations {
-    public String translatedText;
+public enum TranslationEngineType {
+    Bing,
+    Google
 }
