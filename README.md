@@ -13,7 +13,7 @@ to<br>
 
 ####Warning
 * Currently, Android Localizationer only support translate **English** to other languages
-* The result may **not** be meet your standards due to the Translation API that this plugin is using, so keep your string resources **as simple as possible**
+* The result may **not** meet your standards due to the Translation API that this plugin is using, so keep your string resources **as simple as possible**
 
 More features are coming, please check [Todo](https://github.com/westlinkin/AndroidLocalizationer#todo).
 

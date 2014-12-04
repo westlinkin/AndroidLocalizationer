@@ -16,10 +16,15 @@
 
 package language_engine.bing;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import data.Key;
 import data.Log;
 import language_engine.HttpUtils;
+import module.SupportedLanguages;
+import org.apache.http.Header;
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 
 import java.util.ArrayList;
@@ -31,6 +36,8 @@ import java.util.List;
 public class BingTranslationApi {
     private static final String AUTH_URL = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13/";
 
+    private static final String TRANSLATE_URL = "http://api.microsofttranslator.com/V2/Http.svc/TranslateArray";
+
     private static List<NameValuePair> getAccessTokenNameValuePair() {
         List<NameValuePair> params = new ArrayList<NameValuePair>(4);
         params.add(new BasicNameValuePair("client_id", Key.BING_CLIENT_ID));
@@ -40,8 +47,47 @@ public class BingTranslationApi {
         return params;
     }
 
-    private static String getAccessToken() {
+    public static String getAccessToken() {
         String postResult = HttpUtils.doHttpPost(AUTH_URL, getAccessTokenNameValuePair());
+        JsonObject jsonObject = new JsonParser().parse(postResult).getAsJsonObject();
+        return jsonObject.get("access_token").getAsString();
+    }
+
+    public static String getTranslatedStringArrays(String accessToken, List<String> querys, SupportedLanguages from, SupportedLanguages to) {
+        String xmlBodyTop = "<TranslateArrayRequest>\n" +
+                "  <AppId />\n" +
+                "  <From>%s</From>\n" +
+                "  <Options>\n" +
+                "    <Category xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />\n" +
+                "    <ContentType xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\">text/plain</ContentType>\n" +
+                "    <ReservedFlags xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />\n" +
+                "    <State xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />\n" +
+                "    <Uri xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />\n" +
+                "    <User xmlns=\"http://schemas.datacontract.org/2004/07/Microsoft.MT.Web.Service.V2\" />\n" +
+                "  </Options>\n" +
+                "  <Texts>\n";
+
+        String xmlBodyMid = "<string xmlns=\"http://schemas.microsoft.com/2003/10/Serialization/Arrays\">%s</string>\n";
+        String xmlBodyBot = "    </Texts>\n" +
+                "  <To>%s</To>\n" +
+                "</TranslateArrayRequest>";
+
+        String xmlBodyStrings = "";
+        for (String query : querys) {
+            xmlBodyStrings += String.format(xmlBodyMid, query);
+        }
+
+        String xmlBody = String.format(xmlBodyTop, from.getLanguageCode())
+                + xmlBodyStrings
+                + String.format(xmlBodyBot, to.getLanguageCode());
+
+        Header[] headers = new Header[]{
+            new BasicHeader("Authorization", "Bearer " + accessToken),
+            new BasicHeader("Content-Type", "text/xml")
+        };
+
+        String postResult = HttpUtils.doHttpPost(TRANSLATE_URL, xmlBody, headers);
+        // todo fix the xml result, possibly create some classes, get the List<String> as result
         Log.i(postResult);
         return null;
     }

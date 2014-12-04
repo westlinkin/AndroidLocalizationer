@@ -19,7 +19,9 @@ package data.task;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import data.Log;
 import language_engine.TranslationEngineType;
+import language_engine.bing.BingTranslationApi;
 import module.AndroidString;
 import module.SupportedLanguages;
 import org.jetbrains.annotations.NotNull;
@@ -71,7 +73,9 @@ public class GetTranslationTask extends Task.Backgroundable{
         // todo
         switch (translationEngineType) {
             case Bing:
-
+                String accessToken = BingTranslationApi.getAccessToken();
+                Log.i("accessToken: " + accessToken);
+                BingTranslationApi.getTranslatedStringArrays(accessToken, querys, sourceLanguageCode, targetLanguageCode);
                 // return XXX
                 break;
             case Google:

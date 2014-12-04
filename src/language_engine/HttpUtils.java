@@ -17,13 +17,14 @@
 package language_engine;
 
 import com.intellij.openapi.util.io.StreamUtil;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
+import org.apache.http.*;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
 
 import java.util.List;
 
@@ -50,6 +51,20 @@ public class HttpUtils {
             HttpClient httpClient = new DefaultHttpClient();
             HttpPost httpPost = new HttpPost(url);
             httpPost.setEntity(new UrlEncodedFormEntity(params, "UTF-8"));
+            HttpResponse resp = httpClient.execute(httpPost);
+            return StreamUtil.readText(resp.getEntity().getContent(), "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String doHttpPost(String url, String xmlBody, Header[] headers) {
+        try {
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setHeaders(headers);
+            httpPost.setEntity(new StringEntity(xmlBody, "UTF-8"));
             HttpResponse resp = httpClient.execute(httpPost);
             return StreamUtil.readText(resp.getEntity().getContent(), "UTF-8");
         } catch (Exception e) {
