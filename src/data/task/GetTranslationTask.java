@@ -37,14 +37,19 @@ public class GetTranslationTask extends Task.Backgroundable{
     private List<AndroidString> androidStrings;
     private double indicatorFractionFrame;
     private TranslationEngineType translationEngineType;
+    private boolean override;
 
-    public GetTranslationTask(Project project, String title, List<SupportedLanguages> selectedLanguages,
-                              List<AndroidString> androidStrings, TranslationEngineType translationEngineType) {
+    public GetTranslationTask(Project project, String title,
+                              List<SupportedLanguages> selectedLanguages,
+                              List<AndroidString> androidStrings,
+                              TranslationEngineType translationEngineType,
+                              boolean override) {
         super(project, title);
         this.selectedLanguages = selectedLanguages;
         this.androidStrings = androidStrings;
         this.translationEngineType = translationEngineType;
         this.indicatorFractionFrame = 1.0d / (double)(this.selectedLanguages.size());
+        this.override = override;
     }
 
     @Override
@@ -52,6 +57,7 @@ public class GetTranslationTask extends Task.Backgroundable{
         for (int i = 0; i < selectedLanguages.size(); i++) {
             SupportedLanguages language = selectedLanguages.get(i);
             List<AndroidString> translationResult = getTranslationEngineResult(
+                    // todo: need to filter the androidString
                     AndroidString.getAndroidStringValues(androidStrings),
                     language,
                     SupportedLanguages.English,

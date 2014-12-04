@@ -102,7 +102,7 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
 
         // todo: title should adding using which language engine
         new GetTranslationTask(project, "Translation in progress", selectedLanguages,
-                androidStringsInStringFile, defaultTranslationEngine).queue();
+                androidStringsInStringFile, defaultTranslationEngine, overrideChecked).queue();
     }
 
     private void showErrorDialog(Project project, String msg) {
