@@ -23,6 +23,7 @@ import com.intellij.openapi.actionSystem.DataConstants;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
+import data.Log;
 import data.StorageDataKey;
 import data.task.GetTranslationTask;
 import language_engine.TranslationEngineType;
@@ -49,6 +50,8 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
 
     public TranslationEngineType defaultTranslationEngine = TranslationEngineType.Bing;
 
+    private VirtualFile clickedFile;
+
     public void actionPerformed(AnActionEvent e) {
 
         project = e.getProject();
@@ -56,7 +59,9 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
             return;
         }
 
-        VirtualFile clickedFile = (VirtualFile) e.getDataContext().getData(DataConstants.VIRTUAL_FILE);
+        clickedFile = (VirtualFile) e.getDataContext().getData(DataConstants.VIRTUAL_FILE);
+        Log.i("clicked file: " + clickedFile.getPath());
+
         if (clickedFile.getExtension() == null || !clickedFile.getExtension().equals("xml")) {
             showErrorDialog(project, "Target file is not an Android string resource.");
             return;
@@ -100,9 +105,8 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
                     String.valueOf(selectedLanguages.contains(language)));
         }
 
-        // todo: title should adding using which language engine
-        new GetTranslationTask(project, "Translation in progress", selectedLanguages,
-                androidStringsInStringFile, defaultTranslationEngine, overrideChecked).queue();
+        new GetTranslationTask(project, "Translation in progress, using " + defaultTranslationEngine.getDisplayName(),
+                selectedLanguages, androidStringsInStringFile, defaultTranslationEngine, overrideChecked, clickedFile).queue();
     }
 
     private void showErrorDialog(Project project, String msg) {

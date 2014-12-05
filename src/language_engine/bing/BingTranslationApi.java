@@ -27,6 +27,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,7 +54,7 @@ public class BingTranslationApi {
         return jsonObject.get("access_token").getAsString();
     }
 
-    public static String getTranslatedStringArrays(String accessToken, List<String> querys, SupportedLanguages from, SupportedLanguages to) {
+    public static List<String> getTranslatedStringArrays(String accessToken, List<String> querys, SupportedLanguages from, SupportedLanguages to) {
         String xmlBodyTop = "<TranslateArrayRequest>\n" +
                 "  <AppId />\n" +
                 "  <From>%s</From>\n" +
@@ -86,9 +87,13 @@ public class BingTranslationApi {
             new BasicHeader("Content-Type", "text/xml")
         };
 
-        String postResult = HttpUtils.doHttpPost(TRANSLATE_URL, xmlBody, headers);
-        // todo fix the xml result, possibly create some classes, get the List<String> as result
-        Log.i(postResult);
-        return null;
+        InputStream postResult = HttpUtils.doHttpPost(TRANSLATE_URL, xmlBody, headers);
+        List<TranslateArrayResponse> translateArrayResponses = BingResultParser.parseTranslateArrayResponse(postResult);
+
+        List<String> result = new ArrayList<String>();
+        for (TranslateArrayResponse translateArrayResponse : translateArrayResponses) {
+            result.add(translateArrayResponse.getTranslatedText());
+        }
+        return result;
     }
 }

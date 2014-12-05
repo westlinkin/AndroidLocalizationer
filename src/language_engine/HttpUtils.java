@@ -26,6 +26,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicHeader;
 
+import java.io.InputStream;
 import java.util.List;
 
 /**
@@ -59,14 +60,14 @@ public class HttpUtils {
         return null;
     }
 
-    public static String doHttpPost(String url, String xmlBody, Header[] headers) {
+    public static InputStream doHttpPost(String url, String xmlBody, Header[] headers) {
         try {
             HttpClient httpClient = new DefaultHttpClient();
             HttpPost httpPost = new HttpPost(url);
             httpPost.setHeaders(headers);
             httpPost.setEntity(new StringEntity(xmlBody, "UTF-8"));
             HttpResponse resp = httpClient.execute(httpPost);
-            return StreamUtil.readText(resp.getEntity().getContent(), "UTF-8");
+            return resp.getEntity().getContent();
         } catch (Exception e) {
             e.printStackTrace();
         }

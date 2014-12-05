@@ -130,6 +130,18 @@ public enum SupportedLanguages {
         return getLanguageEnglishDisplayName() + "(\"" + getLanguageCode() + "\", \"" + getLanguageDisplayName() + "\")";
     }
 
+    // get the right value-XX suffix
+    public String getAndroidStringFolderNameSuffix() {
+        if (this == Chinese_Simplified_BING || this == Chinese_Simplified)
+            return "zh-rCN";
+        if (this == Chinese_Traditional_BING || this == Chinese_Traditional)
+            return "zh-rTW";
+        if (this == Hebrew_BING)
+            return Hebrew.getLanguageCode();
+
+        return this.getLanguageCode();
+    }
+
     // google supported language code: https://cloud.google.com/translate/v2/using_rest, language reference section
     private static List<SupportedLanguages> getGoogleLanguages() {
         List<SupportedLanguages> result = new ArrayList<SupportedLanguages>();

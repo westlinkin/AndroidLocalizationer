@@ -19,6 +19,9 @@ package data.task;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vcs.vfs.VcsVirtualFile;
+import com.intellij.openapi.vfs.VirtualFile;
+import data.Key;
 import data.Log;
 import language_engine.TranslationEngineType;
 import language_engine.bing.BingTranslationApi;
@@ -26,6 +29,7 @@ import module.AndroidString;
 import module.SupportedLanguages;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,18 +42,21 @@ public class GetTranslationTask extends Task.Backgroundable{
     private double indicatorFractionFrame;
     private TranslationEngineType translationEngineType;
     private boolean override;
+    private VirtualFile clickedFile;
 
     public GetTranslationTask(Project project, String title,
                               List<SupportedLanguages> selectedLanguages,
                               List<AndroidString> androidStrings,
                               TranslationEngineType translationEngineType,
-                              boolean override) {
+                              boolean override,
+                              VirtualFile clickedFile) {
         super(project, title);
         this.selectedLanguages = selectedLanguages;
         this.androidStrings = androidStrings;
         this.translationEngineType = translationEngineType;
         this.indicatorFractionFrame = 1.0d / (double)(this.selectedLanguages.size());
         this.override = override;
+        this.clickedFile = clickedFile;
     }
 
     @Override
@@ -57,8 +64,7 @@ public class GetTranslationTask extends Task.Backgroundable{
         for (int i = 0; i < selectedLanguages.size(); i++) {
             SupportedLanguages language = selectedLanguages.get(i);
             List<AndroidString> translationResult = getTranslationEngineResult(
-                    // todo: need to filter the androidString
-                    AndroidString.getAndroidStringValues(androidStrings),
+                    filterAndroidString(androidStrings, language, override),
                     language,
                     SupportedLanguages.English,
                     translationEngineType
@@ -67,27 +73,80 @@ public class GetTranslationTask extends Task.Backgroundable{
             indicator.setText("Translating to " + language.getLanguageEnglishDisplayName()
                     + " (" + language.getLanguageDisplayName() + ")");
 
+            Log.i(translationResult.toString());
+
             // todo: write to file
+            String fileName = getValueResourcePath(language);
+            Log.i("fileName: " + fileName);
+
 
         }
     }
 
-    private List<AndroidString> getTranslationEngineResult(@NotNull List<String> querys,
+
+    private String getValueResourcePath(SupportedLanguages language) {
+        String resPath = clickedFile.getPath().substring(0,
+                clickedFile.getPath().indexOf("/res/") + "/res/".length());
+
+        return resPath + "values-" + language.getAndroidStringFolderNameSuffix()
+                + "/" + clickedFile.getName();
+    }
+
+    private List<AndroidString> getTranslationEngineResult(@NotNull List<AndroidString> needToTranslatedString,
                                                            @NotNull SupportedLanguages targetLanguageCode,
                                                            @NotNull SupportedLanguages sourceLanguageCode,
                                                            TranslationEngineType translationEngineType) {
-        // todo
+
+        List<String> querys = AndroidString.getAndroidStringValues(needToTranslatedString);
+        List<String> result = null;
+
         switch (translationEngineType) {
             case Bing:
                 String accessToken = BingTranslationApi.getAccessToken();
-                Log.i("accessToken: " + accessToken);
-                BingTranslationApi.getTranslatedStringArrays(accessToken, querys, sourceLanguageCode, targetLanguageCode);
+                result = BingTranslationApi.getTranslatedStringArrays(accessToken, querys, sourceLanguageCode, targetLanguageCode);
                 // return XXX
                 break;
             case Google:
+                // todo
                 break;
         }
-        return  null;
+
+        if (result == null)
+            return null;
+        List<AndroidString> translatedAndroidStrings = new ArrayList<AndroidString>();
+
+        for (int i = 0; i < needToTranslatedString.size(); i++) {
+            translatedAndroidStrings.add(new AndroidString(
+                    needToTranslatedString.get(i).getKey(), result.get(i)));
+        }
+        return  translatedAndroidStrings;
+    }
+
+    private List<AndroidString> filterAndroidString(List<AndroidString> origin,
+                                                           SupportedLanguages language,
+                                                           boolean override) {
+        List<AndroidString> result = new ArrayList<AndroidString>();
+
+        for (AndroidString androidString : origin) {
+            // filter NAL_
+            if (androidString.getKey().startsWith(Key.NO_NEED_TRANSLATION_ANDROID_STRING_PREFIX))
+                continue;
+
+            // override
+            if (!override) {
+                String virturalFilePath = getValueResourcePath(language);
+                // check if there is the file
+//                getValueFolderName(language) + clickedFileName;
+
+                // check if there is the androidString in this file
+                // if there is, filter it
+
+            }
+
+            result.add(androidString);
+        }
+
+        return result;
     }
 
 }

@@ -14,22 +14,33 @@
  * limitations under the License.
  */
 
-package language_engine;
+package language_engine.bing;
 
 /**
- * Created by Wesley Lin on 12/2/14.
+ * Created by Wesley Lin on 12/5/14.
  */
-public enum TranslationEngineType {
-    Bing("Microsoft Translator"),
-    Google("Google Translation API");
+public class TranslateArrayResponse {
+    private String from = "";
+    private String translatedText = "";
 
-    private String displayName;
-
-    TranslationEngineType(String displayName) {
-        this.displayName = displayName;
+    public String getFrom() {
+        return from;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
+
+    public String getTranslatedText() {
+        return translatedText;
+    }
+
+    public void setTranslatedText(String translatedText) {
+        this.translatedText = translatedText;
+    }
+
+    public String toString() {
+        return "[from: " + from + ", translatedText: " + translatedText + "]";
     }
 }
