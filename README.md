@@ -35,6 +35,15 @@ To Install the plugin, please check [IntelliJ IDEA Web Help](https://www.jetbrai
 
 ##ChangeLog
 
+Version 0.0.2
+
+* Fix string error on the popup dialog
+
+Version 0.0.1
+
+* Publish project
+
+
 ##Todo
 * Multiple translation engine
 * Plugin Settings

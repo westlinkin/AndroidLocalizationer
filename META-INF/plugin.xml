@@ -17,7 +17,7 @@
 <idea-plugin version="2">
   <id>com.westlinkin.androidLocalizationer</id>
   <name>Android Localizationer</name>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <vendor email="westlinkin@gmail.com" >Wesley Lin</vendor>
 
   <description><![CDATA[
@@ -27,11 +27,18 @@
       See more at <a href="https://github.com/westlinkin/AndroidLocalizationer">GitHub Page</a>.
     ]]></description>
 
-  <!--<change-notes><![CDATA[-->
-      <!--Add change notes here.<br>-->
-      <!--<em>most HTML tags may be used</em>-->
-    <!--]]>-->
-  <!--</change-notes>-->
+  <change-notes><![CDATA[
+      Version 0.0.2
+      <ul>
+        <li>Fix string error on the popup dialog</li>
+      </ul>
+
+      Version 0.0.1
+      <ul>
+        <li>Publish project</li>
+      </ul>
+    ]]>
+  </change-notes>
 
   <!-- please see http://confluence.jetbrains.com/display/IDEADEV/Build+Number+Ranges for description -->
   <idea-version since-build="131"/>
