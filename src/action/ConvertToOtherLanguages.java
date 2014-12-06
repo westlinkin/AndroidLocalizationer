@@ -41,7 +41,7 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
 
     private static final String LOCALIZATION_TITLE = "Choose alternative string resources";
     private static final String LOCALIZATION_MSG = "Warning: " +
-            "The string resources are translated by Google Translation API, " +
+            "The string resources are translated by %s, " +
             "try keeping your string resources simple, so that the result is more satisfied.";
     private static final String OVERRIDE_EXITS_STRINGS = "Override the exiting strings";
 
@@ -81,7 +81,7 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
 
         // show dialog
         MultiSelectDialog multiSelectDialog = new MultiSelectDialog(project,
-                LOCALIZATION_MSG,
+                String.format(LOCALIZATION_MSG, defaultTranslationEngine.getDisplayName()),
                 LOCALIZATION_TITLE,
                 null,
                 OVERRIDE_EXITS_STRINGS,
