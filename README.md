@@ -2,23 +2,36 @@
 
 This is a Android Studio/ IntelliJIdea plugin to localize your Android app, translate your string resources automactically.
 
-
-##Features & Usage
 Translate all your strings in your string resources(e.g. `strings.xml`) to your target languages automactically. Help developers localize their Android app easily, with just one click.
+
+
+##Usage
+
+Right click the strings resource file, choose 'Convert to other languages'.<br>
+![img](https://raw.githubusercontent.com/westlinkin/AndroidLocalizationer/master/screen_shot_1.png)<br>
+Then check the target languages.<br>
+![img](https://raw.githubusercontent.com/westlinkin/AndroidLocalizationer/master/screen_shot_2.png) 
+<br>
+After clicking `OK`, the string resources will be translated and created in the correct value folder.
+
+##Feature
 
 * Filter the strings you don't wanna translate by adding `NAL_` prefix to the `string key`, case sensitive. Change:<br>
 `<string name="flurry_id">FLURRY_ID</string>`<br>
 to<br>
 `<string name="NAL_flurry_id">FLURRY_ID</string>`
 
-####Warning
+More features are coming, please check [Todo](https://github.com/westlinkin/AndroidLocalizationer#todo).
+
+##Warning
 * Currently, Android Localizationer only support translate **English** to other languages
 * The result may **not** meet your standards due to the Translation API that this plugin is using, so keep your string resources **as simple as possible**
 
-More features are coming, please check [Todo](https://github.com/westlinkin/AndroidLocalizationer#todo).
-
 
 ##Downloads
+You can download the plugin [here](https://github.com/westlinkin/AndroidLocalizationer/raw/master/AndroidLocalizationer.jar).
+
+To Install the plugin, please check [IntelliJ IDEA Web Help](https://www.jetbrains.com/idea/help/installing-updating-and-uninstalling-repository-plugins.html#d1282549e185).
 
 ##ChangeLog
 
