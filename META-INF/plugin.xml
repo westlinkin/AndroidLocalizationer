@@ -21,8 +21,10 @@
   <vendor email="westlinkin@gmail.com" >Wesley Lin</vendor>
 
   <description><![CDATA[
-      Help developers to localize their Android apps.<br><br>
-      Use multiple Translation APIs to translate <b>strings</b> into other languages.
+      Translate all your strings in your <b>string</b> resources(e.g. strings.xml) to your target languages automactically.<br>
+      Help developers localize their Android app easily, with just one click.<br><br>
+      Use multiple Translation APIs to translate <b>strings</b> into other languages.<br><br>
+      See more at <a href="https://github.com/westlinkin/AndroidLocalizationer">GitHub Page</a>.
     ]]></description>
 
   <!--<change-notes><![CDATA[-->
