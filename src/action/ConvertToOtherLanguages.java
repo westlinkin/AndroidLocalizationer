@@ -22,6 +22,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
 import data.Log;
 import data.StorageDataKey;
@@ -53,6 +54,10 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
 
     private VirtualFile clickedFile;
 
+    public ConvertToOtherLanguages() {
+        super("Convert to other languages", null, IconLoader.getIcon("/icons/globe.png"));
+    }
+
     @Override
     public void update(AnActionEvent e) {
         final VirtualFile file = CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext());
@@ -63,7 +68,6 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
     }
 
     public void actionPerformed(AnActionEvent e) {
-
         project = CommonDataKeys.PROJECT.getData(e.getDataContext());
         if (project == null) {
             return;
