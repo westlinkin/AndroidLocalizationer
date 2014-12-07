@@ -19,7 +19,7 @@ package action;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataConstants;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -29,6 +29,7 @@ import data.task.GetTranslationTask;
 import language_engine.TranslationEngineType;
 import module.AndroidString;
 import module.SupportedLanguages;
+import org.jetbrains.annotations.Nullable;
 import ui.MultiSelectDialog;
 
 import java.io.IOException;
@@ -52,20 +53,24 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
 
     private VirtualFile clickedFile;
 
+    @Override
+    public void update(AnActionEvent e) {
+        final VirtualFile file = CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext());
+
+        boolean isStringXML = isStringXML(file);
+        e.getPresentation().setEnabled(isStringXML);
+        e.getPresentation().setVisible(isStringXML);
+    }
+
     public void actionPerformed(AnActionEvent e) {
 
-        project = e.getProject();
+        project = CommonDataKeys.PROJECT.getData(e.getDataContext());
         if (project == null) {
             return;
         }
 
-        clickedFile = (VirtualFile) e.getDataContext().getData(DataConstants.VIRTUAL_FILE);
+        clickedFile = CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext());
         Log.i("clicked file: " + clickedFile.getPath());
-
-        if (clickedFile.getExtension() == null || !clickedFile.getExtension().equals("xml")) {
-            showErrorDialog(project, "Target file is not an Android string resource.");
-            return;
-        }
 
         // todo: read settings, write @defaultTranslationEngine
 
@@ -111,5 +116,21 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
 
     private void showErrorDialog(Project project, String msg) {
         Messages.showErrorDialog(project, msg, "Error");
+    }
+
+    private static boolean isStringXML(@Nullable VirtualFile file) {
+        if (file == null)
+            return false;
+
+        if (!file.getName().equals("strings.xml"))
+            return false;
+
+        if (file.getParent() == null)
+            return false;
+
+        if (!file.getParent().getName().startsWith("values"))
+            return false;
+
+        return true;
     }
 }
