@@ -51,6 +51,8 @@
 
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
+      <applicationConfigurable
+              instance="settings.SettingConfigurable"/>
   </extensions>
 
   <application-components>

@@ -79,6 +79,10 @@ public class GetTranslationTask extends Task.Backgroundable{
             indicator.setText("Translating to " + language.getLanguageEnglishDisplayName()
                     + " (" + language.getLanguageDisplayName() + ")");
 
+            if (translationResult == null) {
+                // todo: wrong with result, possibly api quota is out, should show error msg
+                return;
+            }
             String fileName = getValueResourcePath(language);
             List<AndroidString> fileContent = getTargetAndroidStrings(androidStrings, translationResult, fileName, override);
 
@@ -121,7 +125,7 @@ public class GetTranslationTask extends Task.Backgroundable{
             translatedAndroidStrings.add(new AndroidString(
                     needToTranslatedString.get(i).getKey(), result.get(i)));
         }
-        return  translatedAndroidStrings;
+        return translatedAndroidStrings;
     }
 
     private List<AndroidString> filterAndroidString(List<AndroidString> origin,
