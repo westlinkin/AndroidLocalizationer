@@ -32,4 +32,17 @@ public enum TranslationEngineType {
     public String getDisplayName() {
         return displayName;
     }
+
+    public static TranslationEngineType[] getLanguageEngineArray() {
+        // todo: for now, type google is not in
+        return new TranslationEngineType[]{
+                Bing,
+        };
+    }
+
+
+    @Override
+    public String toString() {
+        return getDisplayName();
+    }
 }
