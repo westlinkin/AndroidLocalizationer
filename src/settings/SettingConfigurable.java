@@ -20,6 +20,7 @@ import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import data.Log;
 import language_engine.TranslationEngineType;
+import org.jdesktop.swingx.prompt.PromptSupport;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +40,10 @@ import java.net.URISyntaxException;
 public class SettingConfigurable implements Configurable, ActionListener {
 
     private JPanel settingPanel;
+
     private Container bingContainer;
+    private JTextField bingClientIdField;
+    private JTextField bingClientSecretField;
 
     @Nls
     @Override
@@ -73,7 +77,7 @@ public class SettingConfigurable implements Configurable, ActionListener {
             container.add(new JLabel("Language engine: "), BorderLayout.WEST);
             container.add(comboBox, BorderLayout.CENTER);
 
-            settingPanel.add(container, BorderLayout.NORTH);
+            settingPanel.add(container, BorderLayout.PAGE_START);
 
             // todo: at first, only bing
             initBingContainer();
@@ -115,13 +119,16 @@ public class SettingConfigurable implements Configurable, ActionListener {
         if (bingContainer != null)
             return;
 
+        bingClientIdField = new JTextField();
+        bingClientSecretField = new JTextField();
+
+        PromptSupport.setPrompt("Default client id", bingClientIdField);
+        PromptSupport.setPrompt("Default client secret", bingClientSecretField);
+
         bingContainer = new Container();
         bingContainer.setLayout(new BorderLayout());
 
-        Container container = new Container();
-        container.setLayout(new BorderLayout());
-
-        String howto = "<html><br><br><a href=\"http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx\">How to set ClientId and ClientSecret?</a></html>";
+        String howto = "<html><br><a href=\"http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx\">How to set ClientId and ClientSecret?</a></html>";
         JLabel howtoLabel = new JLabel();
         howtoLabel.setText(howto);
         howtoLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -137,16 +144,38 @@ public class SettingConfigurable implements Configurable, ActionListener {
                 }
             }
         });
+        bingContainer.add(howtoLabel, BorderLayout.NORTH);
 
-        Container clientIdContainer = new Container();
-        clientIdContainer.setLayout(new BorderLayout());
-        clientIdContainer.add(new JLabel("Client Id: "), BorderLayout.WEST);
-        //todo: add textbox
+        Container contentContainer = new Container();
+        contentContainer.setLayout(new GridBagLayout());
+        ((GridBagLayout)contentContainer.getLayout()).columnWidths = new int[] {0, 0, 0};
+        ((GridBagLayout)contentContainer.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
+        ((GridBagLayout)contentContainer.getLayout()).columnWeights = new double[] {0.0, 0.0, 1.0E-4};
+        ((GridBagLayout)contentContainer.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
 
-        container.add(howtoLabel, BorderLayout.NORTH);
+        contentContainer.add(new JLabel("<html><br></html>"), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(0, 0, 5, 5), 0, 0));
 
-        bingContainer.add(container, BorderLayout.NORTH);
+        JLabel clientIdLabel = new JLabel("Client Id:");
+        clientIdLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        contentContainer.add(clientIdLabel, new GridBagConstraints(0, 1, 1, 1, 0.5, 0.0,
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(0, 0, 5, 5), 0, 0));
 
+        contentContainer.add(bingClientIdField, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(0, 0, 5, 0), 0, 0));
 
+        JLabel clientSecretLabel = new JLabel("Client Secret:");
+        clientSecretLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        contentContainer.add(clientSecretLabel, new GridBagConstraints(0, 2, 1, 1, 0.5, 0.0,
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 5), 0, 0));
+        contentContainer.add(bingClientSecretField, new GridBagConstraints(1, 2, 1, 1, 10.0, 0.0,
+                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                new Insets(0, 0, 0, 0), 0, 0));
+
+        bingContainer.add(contentContainer, BorderLayout.CENTER);
     }
 }

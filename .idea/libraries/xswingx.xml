@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="xswingx">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/xswingx.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
