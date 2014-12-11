@@ -16,9 +16,11 @@
 
 package settings;
 
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import data.Log;
+import data.StorageDataKey;
 import language_engine.TranslationEngineType;
 import org.jdesktop.swingx.prompt.PromptSupport;
 import org.jetbrains.annotations.Nls;
@@ -39,11 +41,18 @@ import java.net.URISyntaxException;
  */
 public class SettingConfigurable implements Configurable, ActionListener {
 
+    private static final String DEFAULT_CLIENT_ID = "Default client id";
+    private static final String DEFAULT_CLIENT_SECRET = "Default client secret";
+
     private JPanel settingPanel;
+    private JComboBox languageEngineBox;
+    private TranslationEngineType currentEngine;
 
     private Container bingContainer;
     private JTextField bingClientIdField;
     private JTextField bingClientSecretField;
+
+    private boolean languageEngineChanged = false;
 
     @Nls
     @Override
@@ -67,15 +76,16 @@ public class SettingConfigurable implements Configurable, ActionListener {
             Container container = new Container();
             container.setLayout(new BorderLayout());
 
-            // todo: only one language engine for now, will add a few more in the furture
+            // todo: only one language engine for now, will add a few more in the future
+            currentEngine = TranslationEngineType.Bing;
             TranslationEngineType[] items = TranslationEngineType.getLanguageEngineArray();
-            JComboBox comboBox = new JComboBox(items);
-            comboBox.setEnabled(true);
-            comboBox.setSelectedIndex(0);
-            comboBox.addActionListener(this);
+            languageEngineBox = new JComboBox(items);
+            languageEngineBox.setEnabled(true);
+            languageEngineBox.setSelectedIndex(0);
+            languageEngineBox.addActionListener(this);
 
             container.add(new JLabel("Language engine: "), BorderLayout.WEST);
-            container.add(comboBox, BorderLayout.CENTER);
+            container.add(languageEngineBox, BorderLayout.CENTER);
 
             settingPanel.add(container, BorderLayout.PAGE_START);
 
@@ -88,17 +98,124 @@ public class SettingConfigurable implements Configurable, ActionListener {
 
     @Override
     public boolean isModified() {
+        if (languageEngineChanged)
+            return true;
+
+        PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
+        switch (currentEngine) {
+            case Bing: {
+                String bingClientIdStored = propertiesComponent.getValue(StorageDataKey.BingClientIdStored);
+                String bingClientSecretStored = propertiesComponent.getValue(StorageDataKey.BingClientSecretStored);
+
+                boolean bingClientIdChanged = false;
+                boolean bingClientSecretChanged = false;
+
+                if (bingClientIdStored == null) {
+                    if (!bingClientIdField.getText().isEmpty())
+                        bingClientIdChanged = true;
+                } else {
+                    if (!bingClientIdField.getText().equals(bingClientIdStored)
+                            && !bingClientIdField.getText().trim().isEmpty())
+                        bingClientIdChanged = true;
+                }
+
+                if (bingClientSecretStored == null) {
+                    if (!bingClientSecretField.getText().isEmpty())
+                        bingClientSecretChanged = true;
+                } else {
+                    if (!bingClientSecretField.getText().equals(bingClientSecretStored)
+                            && !bingClientSecretField.getText().trim().isEmpty())
+                        bingClientSecretChanged = true;
+                }
+
+                return bingClientIdChanged || bingClientSecretChanged;
+            }
+            case Google: {
+                //todo: add google
+                return false;
+            }
+        }
         return false;
     }
 
     @Override
     public void apply() throws ConfigurationException {
+        Log.i("apply clicked");
+        if (languageEngineBox == null)
+            return;
+
+        PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
+
+        languageEngineChanged = false;
+        //todo: set currentLanguageEngine
+
+        switch (currentEngine) {
+            case Bing: {
+                if (bingClientIdField == null || bingClientSecretField == null)
+                    return;
+
+                if (!bingClientIdField.getText().trim().isEmpty()) {
+                    propertiesComponent.setValue(StorageDataKey.BingClientIdStored, bingClientIdField.getText());
+                    PromptSupport.setPrompt(bingClientIdField.getText(), bingClientIdField);
+                }
+
+                if (!bingClientSecretField.getText().trim().isEmpty()) {
+                    propertiesComponent.setValue(StorageDataKey.BingClientSecretStored, bingClientSecretField.getText());
+                    PromptSupport.setPrompt(bingClientSecretField.getText(), bingClientSecretField);
+                }
+                bingClientIdField.setText("");
+                bingClientSecretField.setText("");
+            }
+            break;
+            case Google: {
+                //todo: add google
+            }
+            break;
+        }
+        languageEngineBox.requestFocus();
 
     }
 
     @Override
     public void reset() {
+        if (settingPanel == null || currentEngine == null || languageEngineBox == null)
+            return;
 
+        //todo: reset languageEngineBox
+        languageEngineChanged = false;
+
+        Log.i("reset clicked, current engine: " + currentEngine);
+
+        switch (currentEngine) {
+            case Bing: {
+                if (bingClientIdField == null || bingClientSecretField == null)
+                    return;
+
+                PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
+                String bingClientIdStored = propertiesComponent.getValue(StorageDataKey.BingClientIdStored);
+                String bingClientSecretStored = propertiesComponent.getValue(StorageDataKey.BingClientSecretStored);
+
+                if (bingClientIdStored != null) {
+                    PromptSupport.setPrompt(bingClientIdStored, bingClientIdField);
+                } else {
+                    PromptSupport.setPrompt(DEFAULT_CLIENT_ID, bingClientIdField);
+                }
+                bingClientIdField.setText("");
+
+                if (bingClientSecretStored != null) {
+                    PromptSupport.setPrompt(bingClientSecretStored, bingClientSecretField);
+                } else {
+                    PromptSupport.setPrompt(DEFAULT_CLIENT_SECRET, bingClientSecretField);
+                }
+                bingClientSecretField.setText("");
+            }
+            break;
+            case Google: {
+
+            }
+            break;
+        }
+        languageEngineBox.requestFocus();
     }
 
     @Override
@@ -110,8 +227,14 @@ public class SettingConfigurable implements Configurable, ActionListener {
     public void actionPerformed(ActionEvent e) {
         JComboBox comboBox = (JComboBox) e.getSource();
         TranslationEngineType type = (TranslationEngineType) comboBox.getSelectedItem();
+        if (type == currentEngine)
+            return;
+
+        languageEngineChanged = true;
         Log.i("selected type: " + type.name());
+
         //todo: change other JComponents
+        // currentEngine = ...
 
     }
 
@@ -122,8 +245,8 @@ public class SettingConfigurable implements Configurable, ActionListener {
         bingClientIdField = new JTextField();
         bingClientSecretField = new JTextField();
 
-        PromptSupport.setPrompt("Default client id", bingClientIdField);
-        PromptSupport.setPrompt("Default client secret", bingClientSecretField);
+        PromptSupport.setPrompt(DEFAULT_CLIENT_ID, bingClientIdField);
+        PromptSupport.setPrompt(DEFAULT_CLIENT_SECRET, bingClientSecretField);
 
         bingContainer = new Container();
         bingContainer.setLayout(new BorderLayout());

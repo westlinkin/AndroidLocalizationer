@@ -24,4 +24,8 @@ public class StorageDataKey {
 
     public static final String SupportedLanguageCheckStatusPrefix = "AL_SupportedLanguageCheckStatus_";
 
+    // setting
+    public static final String BingClientIdStored = "BingClientIdStored";
+    public static final String BingClientSecretStored = "BingClientSecretStored";
+
 }
