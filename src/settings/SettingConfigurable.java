@@ -184,7 +184,7 @@ public class SettingConfigurable implements Configurable, ActionListener {
         //todo: reset languageEngineBox
         languageEngineChanged = false;
 
-        Log.i("reset clicked, current engine: " + currentEngine);
+        Log.i("reset, current engine: " + currentEngine);
 
         switch (currentEngine) {
             case Bing: {
