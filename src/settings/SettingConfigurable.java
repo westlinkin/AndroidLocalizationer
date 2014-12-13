@@ -254,7 +254,7 @@ public class SettingConfigurable implements Configurable, ActionListener {
         bingContainer = new Container();
         bingContainer.setLayout(new BorderLayout());
 
-        String howto = "<html><br><a href=\"http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx\">How to set ClientId and ClientSecret?</a></html>";
+        String howto = "<html><br><a href=\"http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx\">How to get ClientId and ClientSecret?</a></html>";
         JLabel howtoLabel = new JLabel();
         howtoLabel.setText(howto);
         howtoLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));

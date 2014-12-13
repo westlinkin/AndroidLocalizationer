@@ -17,7 +17,7 @@
 <idea-plugin version="2">
   <id>com.westlinkin.androidLocalizationer</id>
   <name>Android Localizationer</name>
-  <version>0.0.2</version>
+  <version>0.0.3</version>
   <vendor email="westlinkin@gmail.com" >Wesley Lin</vendor>
 
   <description><![CDATA[
@@ -28,6 +28,14 @@
     ]]></description>
 
   <change-notes><![CDATA[
+      Version 0.0.3
+      <ul>
+        <li>Only show 'Convert to other languages' menu on strings.xml files, current only strings.xml file under values or values-en folders.</li>
+        <li>Add an icon before 'Convert to other languages' menu</li>
+        <li>Add a plugin settings interface, client id and client secret for Microsoft Translator can be set by users</li>
+        <li>Popup error message when Microsoft Translator quota exceed or client id/ client secret is invalid</li>
+      </ul>
+
       Version 0.0.2
       <ul>
         <li>Fix string error on the popup dialog</li>

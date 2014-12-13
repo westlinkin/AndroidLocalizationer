@@ -8,7 +8,7 @@ Translate all your strings in your string resources(e.g. `strings.xml`) to your 
 ##Usage
 
 Right click the strings resource file, choose 'Convert to other languages'.<br>
-![img](https://raw.githubusercontent.com/westlinkin/AndroidLocalizationer/master/screen_shot_1.png)<br>
+![img](https://raw.githubusercontent.com/westlinkin/AndroidLocalizationer/master/screen_shot_3.png)<br>
 Then check the target languages.<br>
 ![img](https://raw.githubusercontent.com/westlinkin/AndroidLocalizationer/master/screen_shot_2.png) 
 <br>
@@ -20,6 +20,8 @@ After clicking `OK`, the string resources will be translated and created in the 
 `<string name="flurry_id">FLURRY_ID</string>`<br>
 to<br>
 `<string name="NAL_flurry_id">FLURRY_ID</string>`
+* Set client id or client secret for Microsoft Translator, in case of running out of quota. [How to get Microsoft Translator client id and client secret?](http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx)
+![img](https://raw.githubusercontent.com/westlinkin/AndroidLocalizationer/master/screen_shot_4.png) 
 
 More features are coming, please check [Todo](https://github.com/westlinkin/AndroidLocalizationer#todo).
 
@@ -34,6 +36,12 @@ You can download the plugin [here](https://github.com/westlinkin/AndroidLocaliza
 To Install the plugin, please check [IntelliJ IDEA Web Help](https://www.jetbrains.com/idea/help/installing-updating-and-uninstalling-repository-plugins.html#d1282549e185).
 
 ##ChangeLog
+Version 0.0.3
+
+* Only show 'Convert to other languages' menu on `strings.xml` files, current only `strings.xml` file under `values` or `values-en` folders.
+* Add an icon before 'Convert to other languages' menu
+* Add a plugin settings interface, client id and client secret for Microsoft Translator can be set by users
+* Popup error message when Microsoft Translator quota exceed or client id/ client secret is invalid
 
 Version 0.0.2
 
@@ -48,9 +56,9 @@ Version 0.0.1
 * Multiple translation engine
 * Plugin Settings
 	* Choose the translation engine (translation API) you wanna use
-	* Set translation engine (translation API)'s application key, in case of the API is runing out of quota
+	* <del>Set translation engine (translation API)'s application key, in case of the API is runing out of quota
 	* Filter the `string` key that you don't wanna translate, e.g. `app_name`, `some_api_key`
-* Only show the `Convert to other languages` in the popup menu when right clicking the string resources, like [Google's Translation Editor](http://tools.android.com/recent/androidstudio087released) does
+* <del>Only show the `Convert to other languages` in the popup menu when right clicking the string resources, like [Google's Translation Editor](http://tools.android.com/recent/androidstudio087released) does
 * Support more source languages
 
 
