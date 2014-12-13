@@ -115,7 +115,8 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
         }
 
         new GetTranslationTask(project, "Translation in progress, using " + defaultTranslationEngine.getDisplayName(),
-                selectedLanguages, androidStringsInStringFile, defaultTranslationEngine, overrideChecked, clickedFile).queue();
+                selectedLanguages, androidStringsInStringFile, defaultTranslationEngine, overrideChecked, clickedFile)
+                .setCancelText("Translation has been canceled").queue();
     }
 
     public static void showErrorDialog(Project project, String msg) {

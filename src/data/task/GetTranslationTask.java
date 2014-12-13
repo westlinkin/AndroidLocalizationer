@@ -52,9 +52,9 @@ public class GetTranslationTask extends Task.Backgroundable{
     private VirtualFile clickedFile;
 
     private static final String BingIdInvalid = "Invalid client id or client secret, " +
-            "please check them <html><a href=\"https://datamarket.azure.com/developer/applications\">here.</a></html>";
+            "please check them <html><a href=\"https://datamarket.azure.com/developer/applications\">here</a></html>";
     private static final String BingQuotaExceeded = "Microsoft Translator quota exceeded, " +
-            "please check your data usage <html><a href=\"https://datamarket.azure.com/account/datasets\">here.</a></html>";
+            "please check your data usage <html><a href=\"https://datamarket.azure.com/account/datasets\">here</a></html>";
 
     private static String errorMsg = null;
 

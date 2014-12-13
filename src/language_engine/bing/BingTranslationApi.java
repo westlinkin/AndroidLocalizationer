@@ -55,7 +55,7 @@ public class BingTranslationApi {
     public static String getAccessToken() {
         String postResult = HttpUtils.doHttpPost(AUTH_URL, getAccessTokenNameValuePair());
         JsonObject jsonObject = new JsonParser().parse(postResult).getAsJsonObject();
-        if (jsonObject.get("error").isJsonNull()) {
+        if (jsonObject.get("error") == null) {
             return jsonObject.get("access_token").getAsString();
         }
         return null;
