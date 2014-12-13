@@ -31,7 +31,7 @@ More features are coming, please check [Todo](https://github.com/westlinkin/Andr
 
 
 ##Downloads
-You can download the plugin [here](https://github.com/westlinkin/AndroidLocalizationer/raw/master/AndroidLocalizationer.jar).
+You can download the plugin [here](https://github.com/westlinkin/AndroidLocalizationer/raw/master/AndroidLocalizationer.zip).
 
 To Install the plugin, please check [IntelliJ IDEA Web Help](https://www.jetbrains.com/idea/help/installing-updating-and-uninstalling-repository-plugins.html#d1282549e185).
 
