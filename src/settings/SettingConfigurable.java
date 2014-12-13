@@ -77,11 +77,12 @@ public class SettingConfigurable implements Configurable, ActionListener {
             container.setLayout(new BorderLayout());
 
             // todo: only one language engine for now, will add a few more in the future
-            currentEngine = TranslationEngineType.Bing;
+            currentEngine = TranslationEngineType.fromName(
+                    PropertiesComponent.getInstance().getValue(StorageDataKey.SettingLanguageEngine));
             TranslationEngineType[] items = TranslationEngineType.getLanguageEngineArray();
             languageEngineBox = new JComboBox(items);
             languageEngineBox.setEnabled(true);
-            languageEngineBox.setSelectedIndex(0);
+            languageEngineBox.setSelectedItem(currentEngine);
             languageEngineBox.addActionListener(this);
 
             container.add(new JLabel("Language engine: "), BorderLayout.WEST);
@@ -89,7 +90,7 @@ public class SettingConfigurable implements Configurable, ActionListener {
 
             settingPanel.add(container, BorderLayout.PAGE_START);
 
-            // todo: at first, only bing
+            // todo: at first, only bing, add a function: initUI(TranslationEngineType)
             initBingContainer();
             settingPanel.add(bingContainer, BorderLayout.CENTER);
         }
@@ -147,7 +148,7 @@ public class SettingConfigurable implements Configurable, ActionListener {
         PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
 
         languageEngineChanged = false;
-        //todo: set currentLanguageEngine
+        propertiesComponent.setValue(StorageDataKey.SettingLanguageEngine, currentEngine.toName());
 
         switch (currentEngine) {
             case Bing: {
@@ -178,12 +179,14 @@ public class SettingConfigurable implements Configurable, ActionListener {
 
     @Override
     public void reset() {
-        if (settingPanel == null || currentEngine == null || languageEngineBox == null)
+        if (settingPanel == null || languageEngineBox == null)
             return;
+        PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
 
-        //todo: reset languageEngineBox
+        currentEngine = TranslationEngineType.fromName(
+                propertiesComponent.getValue(StorageDataKey.SettingLanguageEngine));
+        languageEngineBox.setSelectedItem(currentEngine);
         languageEngineChanged = false;
-
         Log.i("reset, current engine: " + currentEngine);
 
         switch (currentEngine) {
@@ -191,7 +194,6 @@ public class SettingConfigurable implements Configurable, ActionListener {
                 if (bingClientIdField == null || bingClientSecretField == null)
                     return;
 
-                PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
                 String bingClientIdStored = propertiesComponent.getValue(StorageDataKey.BingClientIdStored);
                 String bingClientSecretStored = propertiesComponent.getValue(StorageDataKey.BingClientSecretStored);
 
@@ -232,6 +234,7 @@ public class SettingConfigurable implements Configurable, ActionListener {
 
         languageEngineChanged = true;
         Log.i("selected type: " + type.name());
+        currentEngine = type;
 
         //todo: change other JComponents
         // currentEngine = ...

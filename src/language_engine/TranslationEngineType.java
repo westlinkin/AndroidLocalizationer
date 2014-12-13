@@ -40,9 +40,23 @@ public enum TranslationEngineType {
         };
     }
 
-
     @Override
     public String toString() {
         return getDisplayName();
+    }
+
+    public static TranslationEngineType fromName(String name) {
+        if (name == null)
+            return Bing;
+        for (TranslationEngineType type : values()) {
+            if (type.name().equals(name)) {
+                return type;
+            }
+        }
+        return Bing;
+    }
+
+    public String toName() {
+        return name();
     }
 }
