@@ -118,7 +118,7 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
                 selectedLanguages, androidStringsInStringFile, defaultTranslationEngine, overrideChecked, clickedFile).queue();
     }
 
-    private void showErrorDialog(Project project, String msg) {
+    public static void showErrorDialog(Project project, String msg) {
         Messages.showErrorDialog(project, msg, "Error");
     }
 

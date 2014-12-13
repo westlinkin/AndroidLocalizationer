@@ -18,8 +18,9 @@ package language_engine.bing;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.intellij.ide.util.PropertiesComponent;
 import data.Key;
-import data.Log;
+import data.StorageDataKey;
 import language_engine.HttpUtils;
 import module.SupportedLanguages;
 import org.apache.http.Header;
@@ -40,9 +41,12 @@ public class BingTranslationApi {
     private static final String TRANSLATE_URL = "http://api.microsofttranslator.com/V2/Http.svc/TranslateArray";
 
     private static List<NameValuePair> getAccessTokenNameValuePair() {
+        PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
         List<NameValuePair> params = new ArrayList<NameValuePair>(4);
-        params.add(new BasicNameValuePair("client_id", Key.BING_CLIENT_ID));
-        params.add(new BasicNameValuePair("client_secret", Key.BING_CLIENT_SECRET));
+        params.add(new BasicNameValuePair("client_id",
+                propertiesComponent.getValue(StorageDataKey.BingClientIdStored, Key.BING_CLIENT_ID)));
+        params.add(new BasicNameValuePair("client_secret",
+                propertiesComponent.getValue(StorageDataKey.BingClientSecretStored, Key.BING_CLIENT_SECRET)));
         params.add(new BasicNameValuePair("scope", Key.BING_CLIENT_SCOPE));
         params.add(new BasicNameValuePair("grant_type", Key.BING_CLIENT_GRANT_TYPE));
         return params;
@@ -51,7 +55,10 @@ public class BingTranslationApi {
     public static String getAccessToken() {
         String postResult = HttpUtils.doHttpPost(AUTH_URL, getAccessTokenNameValuePair());
         JsonObject jsonObject = new JsonParser().parse(postResult).getAsJsonObject();
-        return jsonObject.get("access_token").getAsString();
+        if (jsonObject.get("error").isJsonNull()) {
+            return jsonObject.get("access_token").getAsString();
+        }
+        return null;
     }
 
     public static List<String> getTranslatedStringArrays(String accessToken, List<String> querys, SupportedLanguages from, SupportedLanguages to) {

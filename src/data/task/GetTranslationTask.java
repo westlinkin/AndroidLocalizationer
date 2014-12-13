@@ -16,6 +16,7 @@
 
 package data.task;
 
+import action.ConvertToOtherLanguages;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
@@ -50,6 +51,13 @@ public class GetTranslationTask extends Task.Backgroundable{
     private boolean override;
     private VirtualFile clickedFile;
 
+    private static final String BingIdInvalid = "Invalid client id or client secret, " +
+            "please check them <html><a href=\"https://datamarket.azure.com/developer/applications\">here.</a></html>";
+    private static final String BingQuotaExceeded = "Microsoft Translator quota exceeded, " +
+            "please check your data usage <html><a href=\"https://datamarket.azure.com/account/datasets\">here.</a></html>";
+
+    private static String errorMsg = null;
+
     public GetTranslationTask(Project project, String title,
                               List<SupportedLanguages> selectedLanguages,
                               List<AndroidString> androidStrings,
@@ -68,7 +76,14 @@ public class GetTranslationTask extends Task.Backgroundable{
     @Override
     public void run(ProgressIndicator indicator) {
         for (int i = 0; i < selectedLanguages.size(); i++) {
+
             SupportedLanguages language = selectedLanguages.get(i);
+
+            // if no strings need to be translated, skip
+            if (AndroidString.getAndroidStringValues(
+                    filterAndroidString(androidStrings, language, override)).isEmpty())
+                continue;
+
             List<AndroidString> translationResult = getTranslationEngineResult(
                     filterAndroidString(androidStrings, language, override),
                     language,
@@ -80,7 +95,6 @@ public class GetTranslationTask extends Task.Backgroundable{
                     + " (" + language.getLanguageDisplayName() + ")");
 
             if (translationResult == null) {
-                // todo: wrong with result, possibly api quota is out, should show error msg
                 return;
             }
             String fileName = getValueResourcePath(language);
@@ -88,6 +102,13 @@ public class GetTranslationTask extends Task.Backgroundable{
 
             writeAndroidStringToLocal(myProject, fileName, fileContent);
         }
+    }
+
+    @Override
+    public void onSuccess() {
+        if (errorMsg == null || errorMsg.isEmpty())
+            return;
+        ConvertToOtherLanguages.showErrorDialog(getProject(), errorMsg);
     }
 
     private String getValueResourcePath(SupportedLanguages language) {
@@ -109,16 +130,22 @@ public class GetTranslationTask extends Task.Backgroundable{
         switch (translationEngineType) {
             case Bing:
                 String accessToken = BingTranslationApi.getAccessToken();
+                if (accessToken == null) {
+                    errorMsg = BingIdInvalid;
+                    return null;
+                }
                 result = BingTranslationApi.getTranslatedStringArrays(accessToken, querys, sourceLanguageCode, targetLanguageCode);
-                // return XXX
+
+                if (result == null || result.isEmpty()) {
+                    errorMsg = BingQuotaExceeded;
+                    return null;
+                }
                 break;
             case Google:
                 // todo
                 break;
         }
 
-        if (result == null)
-            return null;
         List<AndroidString> translatedAndroidStrings = new ArrayList<AndroidString>();
 
         for (int i = 0; i < needToTranslatedString.size(); i++) {
