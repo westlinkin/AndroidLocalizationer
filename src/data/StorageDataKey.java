@@ -29,5 +29,6 @@ public class StorageDataKey {
     public static final String BingClientIdStored = "BingClientIdStored";
     public static final String BingClientSecretStored = "BingClientSecretStored";
 
+    public static final String SettingFilterRules = "SettingFilterRules";
 
 }

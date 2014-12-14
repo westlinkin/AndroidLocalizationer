@@ -19,9 +19,14 @@ package settings;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.ui.ComboBox;
+import com.intellij.ui.components.JBList;
+import com.intellij.ui.components.JBScrollPane;
 import data.Log;
 import data.StorageDataKey;
 import language_engine.TranslationEngineType;
+import module.FilterRule;
+import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.prompt.PromptSupport;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
@@ -35,6 +40,7 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 /**
  * Created by Wesley Lin on 12/8/14.
@@ -52,7 +58,12 @@ public class SettingConfigurable implements Configurable, ActionListener {
     private JTextField bingClientIdField;
     private JTextField bingClientSecretField;
 
+    private JBList filterList;
+    private JButton btnAddFilter;
+    private JButton btnDeleteFilter;
+
     private boolean languageEngineChanged = false;
+    private boolean filterRulesChanged = false;
 
     @Nls
     @Override
@@ -70,7 +81,7 @@ public class SettingConfigurable implements Configurable, ActionListener {
     @Override
     public JComponent createComponent() {
         if (settingPanel == null) {
-            settingPanel = new JPanel(new BorderLayout());
+            settingPanel = new JPanel(new VerticalLayout(18));
 
             // header UI
             Container container = new Container();
@@ -80,7 +91,7 @@ public class SettingConfigurable implements Configurable, ActionListener {
             currentEngine = TranslationEngineType.fromName(
                     PropertiesComponent.getInstance().getValue(StorageDataKey.SettingLanguageEngine));
             TranslationEngineType[] items = TranslationEngineType.getLanguageEngineArray();
-            languageEngineBox = new JComboBox(items);
+            languageEngineBox = new ComboBox(items);
             languageEngineBox.setEnabled(true);
             languageEngineBox.setSelectedItem(currentEngine);
             languageEngineBox.addActionListener(this);
@@ -88,11 +99,13 @@ public class SettingConfigurable implements Configurable, ActionListener {
             container.add(new JLabel("Language engine: "), BorderLayout.WEST);
             container.add(languageEngineBox, BorderLayout.CENTER);
 
-            settingPanel.add(container, BorderLayout.PAGE_START);
+            settingPanel.add(container);
 
             // todo: at first, only bing, add a function: initUI(TranslationEngineType)
             initBingContainer();
-            settingPanel.add(bingContainer, BorderLayout.CENTER);
+            settingPanel.add(bingContainer);
+
+            initAndAddFilterContainer();
         }
         return settingPanel;
     }
@@ -100,6 +113,9 @@ public class SettingConfigurable implements Configurable, ActionListener {
     @Override
     public boolean isModified() {
         if (languageEngineChanged)
+            return true;
+
+        if (filterRulesChanged)
             return true;
 
         PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
@@ -142,7 +158,8 @@ public class SettingConfigurable implements Configurable, ActionListener {
     @Override
     public void apply() throws ConfigurationException {
         Log.i("apply clicked");
-        if (languageEngineBox == null)
+        if (languageEngineBox == null || filterList == null
+                || btnAddFilter == null || btnDeleteFilter == null)
             return;
 
         PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
@@ -175,11 +192,13 @@ public class SettingConfigurable implements Configurable, ActionListener {
         }
         languageEngineBox.requestFocus();
 
+        // todo store filter rules
     }
 
     @Override
     public void reset() {
-        if (settingPanel == null || languageEngineBox == null)
+        if (settingPanel == null || languageEngineBox == null || filterList == null
+                || btnAddFilter == null || btnDeleteFilter == null)
             return;
         PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
 
@@ -218,6 +237,9 @@ public class SettingConfigurable implements Configurable, ActionListener {
             break;
         }
         languageEngineBox.requestFocus();
+
+        // todo reset filter rules
+        resetFilterList();
     }
 
     @Override
@@ -252,9 +274,9 @@ public class SettingConfigurable implements Configurable, ActionListener {
         PromptSupport.setPrompt(DEFAULT_CLIENT_SECRET, bingClientSecretField);
 
         bingContainer = new Container();
-        bingContainer.setLayout(new BorderLayout());
+        bingContainer.setLayout(new BorderLayout(0, 5));
 
-        String howto = "<html><br><a href=\"http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx\">How to get ClientId and ClientSecret?</a></html>";
+        String howto = "<html><a href=\"http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx\">How to get ClientId and ClientSecret?</a></html>";
         JLabel howtoLabel = new JLabel();
         howtoLabel.setText(howto);
         howtoLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -275,9 +297,9 @@ public class SettingConfigurable implements Configurable, ActionListener {
         Container contentContainer = new Container();
         contentContainer.setLayout(new GridBagLayout());
         ((GridBagLayout)contentContainer.getLayout()).columnWidths = new int[] {0, 0, 0};
-        ((GridBagLayout)contentContainer.getLayout()).rowHeights = new int[] {0, 0, 0, 0};
+        ((GridBagLayout)contentContainer.getLayout()).rowHeights = new int[] {0, 0, 0};
         ((GridBagLayout)contentContainer.getLayout()).columnWeights = new double[] {0.0, 0.0, 1.0E-4};
-        ((GridBagLayout)contentContainer.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
+        ((GridBagLayout)contentContainer.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0E-4};
 
         contentContainer.add(new JLabel("<html><br></html>"), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
@@ -285,23 +307,64 @@ public class SettingConfigurable implements Configurable, ActionListener {
 
         JLabel clientIdLabel = new JLabel("Client Id:");
         clientIdLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        contentContainer.add(clientIdLabel, new GridBagConstraints(0, 1, 1, 1, 0.5, 0.0,
+        contentContainer.add(clientIdLabel, new GridBagConstraints(0, 0, 1, 1, 0.5, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets(0, 0, 5, 5), 0, 0));
 
-        contentContainer.add(bingClientIdField, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+        contentContainer.add(bingClientIdField, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets(0, 0, 5, 0), 0, 0));
 
         JLabel clientSecretLabel = new JLabel("Client Secret:");
         clientSecretLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        contentContainer.add(clientSecretLabel, new GridBagConstraints(0, 2, 1, 1, 0.5, 0.0,
+        contentContainer.add(clientSecretLabel, new GridBagConstraints(0, 1, 1, 1, 0.5, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets(0, 0, 0, 5), 0, 0));
-        contentContainer.add(bingClientSecretField, new GridBagConstraints(1, 2, 1, 1, 10.0, 0.0,
+        contentContainer.add(bingClientSecretField, new GridBagConstraints(1, 1, 1, 1, 10.0, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets(0, 0, 0, 0), 0, 0));
 
         bingContainer.add(contentContainer, BorderLayout.CENTER);
+    }
+
+
+    private void initAndAddFilterContainer() {
+        Container filterSettingContainer = new Container();
+        filterSettingContainer.setLayout(new BorderLayout(0, 5));
+
+        JLabel filterLabel = new JLabel("Filter setting");
+        filterSettingContainer.add(filterLabel, BorderLayout.NORTH);
+
+        {
+            Container listPane = new Container();
+            listPane.setLayout(new BorderLayout());
+
+            JBScrollPane scrollPane = new JBScrollPane();
+            filterList = new JBList(new String[]{"1," , "2"});
+
+            filterList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+            scrollPane.setViewportView(filterList);
+            listPane.add(scrollPane, BorderLayout.NORTH);
+
+            Container btnPane = new Container();
+            btnPane.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+            btnAddFilter = new JButton("+");
+            btnDeleteFilter = new JButton("-");
+            btnPane.add(btnAddFilter);
+            btnPane.add(btnDeleteFilter);
+
+
+            listPane.add(btnPane, BorderLayout.CENTER);
+            filterSettingContainer.add(listPane, BorderLayout.CENTER);
+        }
+        settingPanel.add(filterSettingContainer);
+    }
+
+    private void resetFilterList() {
+        FilterRule[] filterRules = new FilterRule[]{};
+        Log.i("result: " + FilterRule.getFilterRulesFromLocal().toString());
+        FilterRule.getFilterRulesFromLocal().toArray(filterRules);
+
+        filterList.setListData(filterRules);
     }
 }
