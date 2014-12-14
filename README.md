@@ -20,8 +20,10 @@ After clicking `OK`, the string resources will be translated and created in the 
 `<string name="flurry_id">FLURRY_ID</string>`<br>
 to<br>
 `<string name="NAL_flurry_id">FLURRY_ID</string>`
-* Set client id or client secret for Microsoft Translator, in case of running out of quota. [How to get Microsoft Translator client id and client secret?](http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx)
-![img](https://raw.githubusercontent.com/westlinkin/AndroidLocalizationer/master/screen_shot_4.png) 
+* Set client id or client secret for Microsoft Translator, in case of running out of quota. 
+	* [How to get Microsoft Translator client id and client secret?](http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx)
+	
+	![img](https://raw.githubusercontent.com/westlinkin/AndroidLocalizationer/master/screen_shot_4.png) 
 
 More features are coming, please check [Todo](https://github.com/westlinkin/AndroidLocalizationer#todo).
 
