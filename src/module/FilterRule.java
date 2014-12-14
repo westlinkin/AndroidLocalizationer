@@ -61,11 +61,13 @@ public class FilterRule {
 
     public static List<FilterRule> getFilterRulesFromLocal() {
         List<FilterRule> result = new ArrayList<FilterRule>();
+        result.add(DefaultFilterRule);
+        result.add(new FilterRule(FilterRuleType.EQUALS, "app_name"));
+        result.add(new FilterRule(FilterRuleType.END_WITH, "fja"));
+        result.add(new FilterRule(FilterRuleType.END_WITH, "habahaba"));
 
         String rules = PropertiesComponent.getInstance().getValue(StorageDataKey.SettingFilterRules);
-        if (rules == null) {
-            result.add(DefaultFilterRule);
-        } else {
+        if (rules != null) {
             Log.i("rules: " + rules);
             //
             Object deserialize = SerializationUtils.deserialize(rules.getBytes());

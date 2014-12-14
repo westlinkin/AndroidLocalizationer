@@ -20,6 +20,7 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.ComboBox;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import data.Log;
@@ -62,6 +63,7 @@ public class SettingConfigurable implements Configurable, ActionListener {
     private JButton btnAddFilter;
     private JButton btnDeleteFilter;
 
+    private java.util.List<FilterRule> filterRules = new ArrayList<FilterRule>();
     private boolean languageEngineChanged = false;
     private boolean filterRulesChanged = false;
 
@@ -192,7 +194,9 @@ public class SettingConfigurable implements Configurable, ActionListener {
         }
         languageEngineBox.requestFocus();
 
-        // todo store filter rules
+        // todo store filter rules, write filterRules
+        filterRulesChanged = false;
+
     }
 
     @Override
@@ -238,7 +242,8 @@ public class SettingConfigurable implements Configurable, ActionListener {
         }
         languageEngineBox.requestFocus();
 
-        // todo reset filter rules
+        // filter rules
+        filterRulesChanged = false;
         resetFilterList();
     }
 
@@ -327,12 +332,11 @@ public class SettingConfigurable implements Configurable, ActionListener {
         bingContainer.add(contentContainer, BorderLayout.CENTER);
     }
 
-
     private void initAndAddFilterContainer() {
         Container filterSettingContainer = new Container();
         filterSettingContainer.setLayout(new BorderLayout(0, 5));
 
-        JLabel filterLabel = new JLabel("Filter setting");
+        final JLabel filterLabel = new JLabel("Filter setting");
         filterSettingContainer.add(filterLabel, BorderLayout.NORTH);
 
         {
@@ -353,6 +357,45 @@ public class SettingConfigurable implements Configurable, ActionListener {
             btnPane.add(btnAddFilter);
             btnPane.add(btnDeleteFilter);
 
+            filterList.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (SwingUtilities.isLeftMouseButton(e)) {
+                        if (filterList.getSelectedIndex() <= 0) {
+                            btnDeleteFilter.setEnabled(false);
+                        } else {
+                            btnDeleteFilter.setEnabled(true);
+                        }
+                    }
+                }
+            });
+
+            btnAddFilter.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    filterRulesChanged = true;
+                    // todo
+                    Messages.showErrorDialog(settingPanel, "error");
+                }
+            });
+
+            btnDeleteFilter.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent actionEvent) {
+                    filterRulesChanged = true;
+                    int index = filterList.getSelectedIndex();
+                    filterRules.remove(index);
+                    filterList.setListData(getFilterRulesDisplayString());
+                    if (index < filterRules.size()) {
+                        filterList.setSelectedIndex(index);
+                    } else {
+                        if (filterRules.size() == 1) {
+                            btnDeleteFilter.setEnabled(false);
+                        }
+                        filterList.setSelectedIndex(filterRules.size() - 1);
+                    }
+                }
+            });
 
             listPane.add(btnPane, BorderLayout.CENTER);
             filterSettingContainer.add(listPane, BorderLayout.CENTER);
@@ -361,10 +404,18 @@ public class SettingConfigurable implements Configurable, ActionListener {
     }
 
     private void resetFilterList() {
-        FilterRule[] filterRules = new FilterRule[]{};
-        Log.i("result: " + FilterRule.getFilterRulesFromLocal().toString());
-        FilterRule.getFilterRulesFromLocal().toArray(filterRules);
+        btnDeleteFilter.setEnabled(false);
+        filterRules.clear();
+        filterRules.addAll(FilterRule.getFilterRulesFromLocal());
 
-        filterList.setListData(filterRules);
+        filterList.setListData(getFilterRulesDisplayString());
+    }
+
+    private String[] getFilterRulesDisplayString() {
+        String[] displayStrings = new String[filterRules.size()];
+        for (int i = 0; i < filterRules.size(); i++ ) {
+            displayStrings[i] = filterRules.get(i).toString();
+        }
+        return displayStrings;
     }
 }
