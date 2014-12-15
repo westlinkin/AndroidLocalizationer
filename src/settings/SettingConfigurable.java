@@ -31,6 +31,7 @@ import org.jdesktop.swingx.VerticalLayout;
 import org.jdesktop.swingx.prompt.PromptSupport;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
+import ui.AddFilterRuleDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -374,8 +375,18 @@ public class SettingConfigurable implements Configurable, ActionListener {
                 @Override
                 public void actionPerformed(ActionEvent actionEvent) {
                     filterRulesChanged = true;
-                    // todo
-                    Messages.showErrorDialog(settingPanel, "error");
+                    AddFilterRuleDialog dialog = new AddFilterRuleDialog(settingPanel,
+                            "Set your filter rule", false);
+                    dialog.setOnOKClickedListener(new AddFilterRuleDialog.OnOKClickedListener() {
+                        @Override
+                        public void onClick(FilterRule.FilterRuleType ruleType, String filterNameString) {
+                            filterRules.add(new FilterRule(ruleType, filterNameString));
+                            int index = filterList.getSelectedIndex();
+                            filterList.setListData(getFilterRulesDisplayString());
+                            filterList.setSelectedIndex(index);
+                        }
+                    });
+                    dialog.show();
                 }
             });
 

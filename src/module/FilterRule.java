@@ -56,15 +56,12 @@ public class FilterRule {
     public static FilterRule DefaultFilterRule = new FilterRule(FilterRuleType.START_WITH, "NAL_");
 
     public String toString() {
-        return getFilterRuleType().name() + "<" + getFilterString() + ">";
+        return getFilterRuleType().toString() + " <" + getFilterString() + ">";
     }
 
     public static List<FilterRule> getFilterRulesFromLocal() {
         List<FilterRule> result = new ArrayList<FilterRule>();
         result.add(DefaultFilterRule);
-        result.add(new FilterRule(FilterRuleType.EQUALS, "app_name"));
-        result.add(new FilterRule(FilterRuleType.END_WITH, "fja"));
-        result.add(new FilterRule(FilterRuleType.END_WITH, "habahaba"));
 
         String rules = PropertiesComponent.getInstance().getValue(StorageDataKey.SettingFilterRules);
         if (rules != null) {
@@ -78,8 +75,22 @@ public class FilterRule {
     }
 
     public enum FilterRuleType {
-        START_WITH,
-        EQUALS,
-        END_WITH
+        START_WITH("Start with"),
+        EQUALS("Equals"),
+        END_WITH("End with");
+
+        private String displayName;
+
+        FilterRuleType(String displayName) {
+            this.displayName = displayName;
+        }
+
+        public String getDisplayName() {
+            return displayName;
+        }
+
+        public String toString() {
+            return getDisplayName();
+        }
     }
 }
