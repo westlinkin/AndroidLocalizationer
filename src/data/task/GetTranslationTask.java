@@ -272,8 +272,13 @@ public class GetTranslationTask extends Task.Backgroundable{
         if (file == null)
             return;
 
-        final FileEditorManager editorManager = FileEditorManager.getInstance(myProject);
-        editorManager.openFile(file, true);
+        // todo: probably not the best practice here
+        try {
+            final FileEditorManager editorManager = FileEditorManager.getInstance(myProject);
+            editorManager.openFile(file, true);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     private static String getFileContent(List<AndroidString> fileContent) {
