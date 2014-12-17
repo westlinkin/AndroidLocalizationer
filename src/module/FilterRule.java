@@ -17,9 +17,8 @@
 package module;
 
 import com.intellij.ide.util.PropertiesComponent;
-import data.Log;
+import data.SerializeUtil;
 import data.StorageDataKey;
-import org.apache.commons.lang.SerializationUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,15 +60,13 @@ public class FilterRule {
 
     public static List<FilterRule> getFilterRulesFromLocal() {
         List<FilterRule> result = new ArrayList<FilterRule>();
-        result.add(DefaultFilterRule);
 
         String rules = PropertiesComponent.getInstance().getValue(StorageDataKey.SettingFilterRules);
         if (rules != null) {
-            Log.i("rules: " + rules);
-            //
-            Object deserialize = SerializationUtils.deserialize(rules.getBytes());
-            Log.i("deserialize: " + deserialize);
-            //todo
+            List<FilterRule> ruleList = SerializeUtil.deserializeFilterRuleList(rules);
+            result.addAll(ruleList);
+        } else {
+            result.add(DefaultFilterRule);
         }
         return result;
     }
@@ -91,6 +88,21 @@ public class FilterRule {
 
         public String toString() {
             return getDisplayName();
+        }
+
+        public static FilterRuleType fromName(String name) {
+            if (name == null)
+                return START_WITH;
+            for (FilterRuleType type : values()) {
+                if (type.name().equals(name)) {
+                    return type;
+                }
+            }
+            return START_WITH;
+        }
+
+        public String toName() {
+            return name();
         }
     }
 }

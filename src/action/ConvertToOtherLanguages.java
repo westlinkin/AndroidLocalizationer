@@ -76,7 +76,10 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
         clickedFile = CommonDataKeys.VIRTUAL_FILE.getData(e.getDataContext());
         Log.i("clicked file: " + clickedFile.getPath());
 
-        // todo: read settings, write @defaultTranslationEngine
+        if (PropertiesComponent.getInstance().isValueSet(StorageDataKey.SettingLanguageEngine)) {
+            defaultTranslationEngine = TranslationEngineType.fromName(
+                    PropertiesComponent.getInstance().getValue(StorageDataKey.SettingLanguageEngine));
+        }
 
         try {
             androidStringsInStringFile = AndroidString.getAndroidStringsList(clickedFile.contentsToByteArray());

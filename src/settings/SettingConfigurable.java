@@ -20,10 +20,10 @@ import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.options.Configurable;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.ui.ComboBox;
-import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import data.Log;
+import data.SerializeUtil;
 import data.StorageDataKey;
 import language_engine.TranslationEngineType;
 import module.FilterRule;
@@ -195,9 +195,9 @@ public class SettingConfigurable implements Configurable, ActionListener {
         }
         languageEngineBox.requestFocus();
 
-        // todo store filter rules, write filterRules
         filterRulesChanged = false;
-
+        propertiesComponent.setValue(StorageDataKey.SettingFilterRules,
+                SerializeUtil.serializeFilterRuleList(filterRules));
     }
 
     @Override
@@ -340,77 +340,76 @@ public class SettingConfigurable implements Configurable, ActionListener {
         final JLabel filterLabel = new JLabel("Filter setting");
         filterSettingContainer.add(filterLabel, BorderLayout.NORTH);
 
-        {
-            Container listPane = new Container();
-            listPane.setLayout(new BorderLayout());
+        Container listPane = new Container();
+        listPane.setLayout(new BorderLayout());
 
-            JBScrollPane scrollPane = new JBScrollPane();
-            filterList = new JBList(new String[]{"1," , "2"});
+        JBScrollPane scrollPane = new JBScrollPane();
+        filterList = new JBList(new String[]{"1," , "2"});
 
-            filterList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-            scrollPane.setViewportView(filterList);
-            listPane.add(scrollPane, BorderLayout.NORTH);
+        filterList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        scrollPane.setViewportView(filterList);
+        listPane.add(scrollPane, BorderLayout.NORTH);
 
-            Container btnPane = new Container();
-            btnPane.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-            btnAddFilter = new JButton("+");
-            btnDeleteFilter = new JButton("-");
-            btnPane.add(btnAddFilter);
-            btnPane.add(btnDeleteFilter);
+        Container btnPane = new Container();
+        btnPane.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        btnAddFilter = new JButton("+");
+        btnDeleteFilter = new JButton("-");
+        btnPane.add(btnAddFilter);
+        btnPane.add(btnDeleteFilter);
 
-            filterList.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    if (SwingUtilities.isLeftMouseButton(e)) {
-                        if (filterList.getSelectedIndex() <= 0) {
-                            btnDeleteFilter.setEnabled(false);
-                        } else {
-                            btnDeleteFilter.setEnabled(true);
-                        }
-                    }
-                }
-            });
-
-            btnAddFilter.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    filterRulesChanged = true;
-                    AddFilterRuleDialog dialog = new AddFilterRuleDialog(settingPanel,
-                            "Set your filter rule", false);
-                    dialog.setOnOKClickedListener(new AddFilterRuleDialog.OnOKClickedListener() {
-                        @Override
-                        public void onClick(FilterRule.FilterRuleType ruleType, String filterNameString) {
-                            filterRules.add(new FilterRule(ruleType, filterNameString));
-                            int index = filterList.getSelectedIndex();
-                            filterList.setListData(getFilterRulesDisplayString());
-                            filterList.setSelectedIndex(index);
-                        }
-                    });
-                    dialog.show();
-                }
-            });
-
-            btnDeleteFilter.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    filterRulesChanged = true;
-                    int index = filterList.getSelectedIndex();
-                    filterRules.remove(index);
-                    filterList.setListData(getFilterRulesDisplayString());
-                    if (index < filterRules.size()) {
-                        filterList.setSelectedIndex(index);
+        filterList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isLeftMouseButton(e)) {
+                    if (filterList.getSelectedIndex() <= 0) {
+                        btnDeleteFilter.setEnabled(false);
                     } else {
-                        if (filterRules.size() == 1) {
-                            btnDeleteFilter.setEnabled(false);
-                        }
-                        filterList.setSelectedIndex(filterRules.size() - 1);
+                        btnDeleteFilter.setEnabled(true);
                     }
                 }
-            });
+            }
+        });
 
-            listPane.add(btnPane, BorderLayout.CENTER);
-            filterSettingContainer.add(listPane, BorderLayout.CENTER);
-        }
+        btnAddFilter.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                filterRulesChanged = true;
+                AddFilterRuleDialog dialog = new AddFilterRuleDialog(settingPanel,
+                        "Set your filter rule", false);
+                dialog.setOnOKClickedListener(new AddFilterRuleDialog.OnOKClickedListener() {
+                    @Override
+                    public void onClick(FilterRule.FilterRuleType ruleType, String filterNameString) {
+                        filterRules.add(new FilterRule(ruleType, filterNameString));
+                        int index = filterList.getSelectedIndex();
+                        filterList.setListData(getFilterRulesDisplayString());
+                        filterList.setSelectedIndex(index);
+                    }
+                });
+                dialog.show();
+            }
+        });
+
+        btnDeleteFilter.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                filterRulesChanged = true;
+                int index = filterList.getSelectedIndex();
+                filterRules.remove(index);
+                filterList.setListData(getFilterRulesDisplayString());
+                if (index < filterRules.size()) {
+                    filterList.setSelectedIndex(index);
+                } else {
+                    if (filterRules.size() == 1) {
+                        btnDeleteFilter.setEnabled(false);
+                    }
+                    filterList.setSelectedIndex(filterRules.size() - 1);
+                }
+            }
+        });
+
+        listPane.add(btnPane, BorderLayout.CENTER);
+        filterSettingContainer.add(listPane, BorderLayout.CENTER);
+
         settingPanel.add(filterSettingContainer);
     }
 
