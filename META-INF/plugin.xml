@@ -17,7 +17,7 @@
 <idea-plugin version="2">
   <id>com.westlinkin.androidLocalizationer</id>
   <name>Android Localizationer</name>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
   <vendor email="westlinkin@gmail.com" >Wesley Lin</vendor>
 
   <description><![CDATA[
@@ -28,6 +28,13 @@
     ]]></description>
 
   <change-notes><![CDATA[
+      Version 0.1.1
+      <ul>
+        <li>Fix bug: when translate to more than one language, only the first target language will be translated correctly</li>
+        <li>Fix bug: filter rule in plugin settings cannot be filtered</li>
+        <li>Fix bug: wrongly show 'Quota exceed' error dialog when both not running out of quota and no strings need to be translated</li>
+      </ul>
+
       Version 0.1.0
       <ul>
         <li>Add <b>filter rule</b> setting in plugin settings interface, filter strings you don't wanna translate</li>

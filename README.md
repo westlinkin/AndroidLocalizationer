@@ -41,6 +41,13 @@ You can download the plugin [here](https://github.com/westlinkin/AndroidLocaliza
 To Install the plugin, please check [IntelliJ IDEA Web Help](https://www.jetbrains.com/idea/help/installing-updating-and-uninstalling-repository-plugins.html#d1282549e185).
 
 ##ChangeLog
+Version 0.1.1
+
+* Fix bug: when translate to more than one language, only the first target language will be translated correctly
+* Fix bug: filter rule in plugin settings cannot be filtered
+* Fix bug: wrongly show 'Quota exceed' error dialog when both not running out of quota and no strings need to be translated
+     
+
 Version 0.1.0
 
 * Add **filter rule** setting in plugin settings interface, filter strings you don't wanna translate
