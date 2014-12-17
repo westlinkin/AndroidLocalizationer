@@ -32,6 +32,11 @@ public class AndroidString {
         this.value = value;
     }
 
+    public AndroidString(AndroidString androidString) {
+        this.key = androidString.getKey();
+        this.value = androidString.getValue();
+    }
+
     public String getKey() {
         return key;
     }

@@ -84,7 +84,6 @@ public class GetTranslationTask extends Task.Backgroundable{
 
             SupportedLanguages language = selectedLanguages.get(i);
 
-            Log.i("1.[" + i + "]: " + androidStrings.toString());
             // if no strings need to be translated, skip
             if (AndroidString.getAndroidStringValues(
                     filterAndroidString(androidStrings, language, override)).isEmpty())
@@ -103,11 +102,9 @@ public class GetTranslationTask extends Task.Backgroundable{
             if (translationResult == null) {
                 return;
             }
-            Log.i("2.[" + i + "]: " + androidStrings.toString());
             String fileName = getValueResourcePath(language);
             List<AndroidString> fileContent = getTargetAndroidStrings(androidStrings, translationResult, fileName, override);
 
-            Log.i("3.[" + i + "]: " + androidStrings.toString());
             writeAndroidStringToLocal(myProject, fileName, fileContent);
         }
     }
@@ -228,26 +225,28 @@ public class GetTranslationTask extends Task.Backgroundable{
                 "translatedAndroidStrings: " + translatedAndroidStrings,
                 "existenceAndroidStrings: " + existenceAndroidStrings);
 
-        List<AndroidString> targetAndroidStrings = new ArrayList<AndroidString>(sourceAndroidStrings);
+        List<AndroidString> targetAndroidStrings = new ArrayList<AndroidString>();
 
-        for(AndroidString androidString : targetAndroidStrings) {
-            Log.i("begin sourceAndroidStrings: " + sourceAndroidStrings);
+        for(int i = 0; i < sourceAndroidStrings.size(); i ++) {
+            AndroidString string = sourceAndroidStrings.get(i);
+            AndroidString resultString = new AndroidString(string);
+
             // if override is checked, skip setting the existence value, for performance issue
             if (!override) {
-                String existenceValue = getAndroidStringValueInList(existenceAndroidStrings, androidString.getKey());
+                String existenceValue = getAndroidStringValueInList(existenceAndroidStrings, resultString.getKey());
                 if (existenceValue != null) {
-                    androidString.setValue(existenceValue);
+                    resultString.setValue(existenceValue);
                 }
             }
 
-            String translatedValue = getAndroidStringValueInList(translatedAndroidStrings, androidString.getKey());
+            String translatedValue = getAndroidStringValueInList(translatedAndroidStrings, resultString.getKey());
             if (translatedValue != null) {
-                androidString.setValue(translatedValue);
+                resultString.setValue(translatedValue);
             }
-            Log.i("end sourceAndroidStrings: " + sourceAndroidStrings);
+
+            targetAndroidStrings.add(resultString);
         }
-        Log.i("sourceAndroidStrings: " + sourceAndroidStrings,
-                "targetAndroidStrings: " + targetAndroidStrings);
+        Log.i("sourceAndroidStrings: " + sourceAndroidStrings);
         return targetAndroidStrings;
     }
 
