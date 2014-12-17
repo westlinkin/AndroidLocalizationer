@@ -17,6 +17,7 @@
 package data.task;
 
 import action.ConvertToOtherLanguages;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
@@ -25,9 +26,12 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import data.Key;
 import data.Log;
+import data.SerializeUtil;
+import data.StorageDataKey;
 import language_engine.TranslationEngineType;
 import language_engine.bing.BingTranslationApi;
 import module.AndroidString;
+import module.FilterRule;
 import module.SupportedLanguages;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -37,6 +41,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -45,7 +50,7 @@ import java.util.List;
 public class GetTranslationTask extends Task.Backgroundable{
 
     private List<SupportedLanguages> selectedLanguages;
-    private List<AndroidString> androidStrings;
+    private final List<AndroidString> androidStrings;
     private double indicatorFractionFrame;
     private TranslationEngineType translationEngineType;
     private boolean override;
@@ -56,7 +61,7 @@ public class GetTranslationTask extends Task.Backgroundable{
     private static final String BingQuotaExceeded = "Microsoft Translator quota exceeded, " +
             "please check your data usage <html><a href=\"https://datamarket.azure.com/account/datasets\">here</a></html>";
 
-    private static String errorMsg = null;
+    private String errorMsg = null;
 
     public GetTranslationTask(Project project, String title,
                               List<SupportedLanguages> selectedLanguages,
@@ -79,6 +84,7 @@ public class GetTranslationTask extends Task.Backgroundable{
 
             SupportedLanguages language = selectedLanguages.get(i);
 
+            Log.i("1.[" + i + "]: " + androidStrings.toString());
             // if no strings need to be translated, skip
             if (AndroidString.getAndroidStringValues(
                     filterAndroidString(androidStrings, language, override)).isEmpty())
@@ -97,9 +103,11 @@ public class GetTranslationTask extends Task.Backgroundable{
             if (translationResult == null) {
                 return;
             }
+            Log.i("2.[" + i + "]: " + androidStrings.toString());
             String fileName = getValueResourcePath(language);
             List<AndroidString> fileContent = getTargetAndroidStrings(androidStrings, translationResult, fileName, override);
 
+            Log.i("3.[" + i + "]: " + androidStrings.toString());
             writeAndroidStringToLocal(myProject, fileName, fileContent);
         }
     }
@@ -172,10 +180,17 @@ public class GetTranslationTask extends Task.Backgroundable{
             }
         }
 
+        String rulesString = PropertiesComponent.getInstance().getValue(StorageDataKey.SettingFilterRules);
+        List<FilterRule> filterRules = new ArrayList<FilterRule>();
+        if (rulesString == null) {
+            filterRules.add(FilterRule.DefaultFilterRule);
+        } else {
+            filterRules = SerializeUtil.deserializeFilterRuleList(rulesString);
+        }
 //        Log.i("targetAndroidString: " + targetAndroidStrings.toString());
         for (AndroidString androidString : origin) {
-            // filter NAL_
-            if (androidString.getKey().startsWith(Key.NO_NEED_TRANSLATION_ANDROID_STRING_PREFIX))
+            // filter rules
+            if (FilterRule.inFilterRule(androidString.getKey(), filterRules))
                 continue;
 
             // override
@@ -216,6 +231,7 @@ public class GetTranslationTask extends Task.Backgroundable{
         List<AndroidString> targetAndroidStrings = new ArrayList<AndroidString>(sourceAndroidStrings);
 
         for(AndroidString androidString : targetAndroidStrings) {
+            Log.i("begin sourceAndroidStrings: " + sourceAndroidStrings);
             // if override is checked, skip setting the existence value, for performance issue
             if (!override) {
                 String existenceValue = getAndroidStringValueInList(existenceAndroidStrings, androidString.getKey());
@@ -228,9 +244,10 @@ public class GetTranslationTask extends Task.Backgroundable{
             if (translatedValue != null) {
                 androidString.setValue(translatedValue);
             }
+            Log.i("end sourceAndroidStrings: " + sourceAndroidStrings);
         }
-
-        Log.i("targetAndroidStrings: " + targetAndroidStrings);
+        Log.i("sourceAndroidStrings: " + sourceAndroidStrings,
+                "targetAndroidStrings: " + targetAndroidStrings);
         return targetAndroidStrings;
     }
 

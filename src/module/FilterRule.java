@@ -71,6 +71,29 @@ public class FilterRule {
         return result;
     }
 
+    public static boolean inFilterRule(String key, List<FilterRule> rules) {
+        for (FilterRule rule : rules) {
+            switch (rule.getFilterRuleType()) {
+                case START_WITH:
+                    if (key.startsWith(rule.getFilterString())) {
+                        return true;
+                    }
+                    break;
+                case EQUALS:
+                    if (key.equals(rule.getFilterString())) {
+                        return true;
+                    }
+                    break;
+                case END_WITH:
+                    if (key.endsWith(rule.getFilterString())) {
+                        return true;
+                    }
+                    break;
+            }
+        }
+        return false;
+    }
+
     public enum FilterRuleType {
         START_WITH("Start with"),
         EQUALS("Equals"),
