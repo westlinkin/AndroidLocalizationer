@@ -24,7 +24,6 @@ import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
-import data.Key;
 import data.Log;
 import data.SerializeUtil;
 import data.StorageDataKey;
@@ -41,7 +40,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -84,11 +82,6 @@ public class GetTranslationTask extends Task.Backgroundable{
 
             SupportedLanguages language = selectedLanguages.get(i);
 
-            // if no strings need to be translated, skip
-            if (AndroidString.getAndroidStringValues(
-                    filterAndroidString(androidStrings, language, override)).isEmpty())
-                continue;
-
             List<AndroidString> translationResult = getTranslationEngineResult(
                     filterAndroidString(androidStrings, language, override),
                     language,
@@ -99,9 +92,6 @@ public class GetTranslationTask extends Task.Backgroundable{
             indicator.setText("Translating to " + language.getLanguageEnglishDisplayName()
                     + " (" + language.getLanguageDisplayName() + ")");
 
-            if (translationResult == null) {
-                return;
-            }
             String fileName = getValueResourcePath(language);
             List<AndroidString> fileContent = getTargetAndroidStrings(androidStrings, translationResult, fileName, override);
 
@@ -130,6 +120,7 @@ public class GetTranslationTask extends Task.Backgroundable{
                                                            TranslationEngineType translationEngineType) {
 
         List<String> querys = AndroidString.getAndroidStringValues(needToTranslatedString);
+
         List<String> result = null;
 
         switch (translationEngineType) {
@@ -141,7 +132,7 @@ public class GetTranslationTask extends Task.Backgroundable{
                 }
                 result = BingTranslationApi.getTranslatedStringArrays(accessToken, querys, sourceLanguageCode, targetLanguageCode);
 
-                if (result == null || result.isEmpty()) {
+                if ((result == null || result.isEmpty()) && !querys.isEmpty()) {
                     errorMsg = BingQuotaExceeded;
                     return null;
                 }
@@ -209,6 +200,11 @@ public class GetTranslationTask extends Task.Backgroundable{
                                                       List<AndroidString> translatedAndroidStrings,
                                                       String fileName,
                                                       boolean override) {
+
+        if(translatedAndroidStrings == null) {
+            translatedAndroidStrings = new ArrayList<AndroidString>();
+        }
+
         VirtualFile existenceFile = LocalFileSystem.getInstance().findFileByPath(fileName);
         List<AndroidString> existenceAndroidStrings = null;
         if (existenceFile != null && !override) {
@@ -246,7 +242,7 @@ public class GetTranslationTask extends Task.Backgroundable{
 
             targetAndroidStrings.add(resultString);
         }
-        Log.i("sourceAndroidStrings: " + sourceAndroidStrings);
+        Log.i("targetAndroidStrings: " + targetAndroidStrings);
         return targetAndroidStrings;
     }
 
