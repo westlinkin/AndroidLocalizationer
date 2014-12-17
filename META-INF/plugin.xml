@@ -17,7 +17,7 @@
 <idea-plugin version="2">
   <id>com.westlinkin.androidLocalizationer</id>
   <name>Android Localizationer</name>
-  <version>0.0.3</version>
+  <version>0.1.0</version>
   <vendor email="westlinkin@gmail.com" >Wesley Lin</vendor>
 
   <description><![CDATA[
@@ -28,6 +28,12 @@
     ]]></description>
 
   <change-notes><![CDATA[
+      Version 0.1.0
+      <ul>
+        <li>Add <b>filter rule</b> setting in plugin settings interface, filter strings you don't wanna translate</li>
+        <li>Fix a possible throwable when automatically open the translated strings.xml file</li>
+      </ul>
+
       Version 0.0.3
       <ul>
         <li>Only show 'Convert to other languages' menu on strings.xml files, current only strings.xml file under values or values-en folders.</li>
