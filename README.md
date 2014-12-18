@@ -1,6 +1,6 @@
 #Android Localizationer
 
-This is a Android Studio/ IntelliJIdea plugin to localize your Android app, translate your string resources automactically.
+This is a Android Studio/ IntelliJ IDEA plugin to localize your Android app, translate your string resources automactically.
 
 Translate all your strings in your string resources(e.g. `strings.xml`) to your target languages automactically. Help developers localize their Android app easily, with just one click.
 
