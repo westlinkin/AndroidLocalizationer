@@ -16,12 +16,18 @@
 
 package language_engine.google;
 
-import data.Key;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.intellij.ide.util.PropertiesComponent;
+import data.Log;
+import data.StorageDataKey;
 import language_engine.HttpUtils;
 import module.SupportedLanguages;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.IllegalFormatException;
 import java.util.List;
 
@@ -33,14 +39,12 @@ public class GoogleTranslationApi {
     private static final String BASE_TRANSLATION_URL = "https://www.googleapis.com/language/translate/v2?%s&target=%s&source=%s&key=%s";
 
     /**
-     * not ready for now
      * @param querys
      * @param targetLanguageCode
      * @param sourceLanguageCode
      * @return
      */
-    @Deprecated
-    public static String getTranslationJSON(@NotNull List<String> querys,
+    public static List<String> getTranslationJSON(@NotNull List<String> querys,
                                                 @NotNull SupportedLanguages targetLanguageCode,
                                                 @NotNull SupportedLanguages sourceLanguageCode) {
         if (querys.isEmpty())
@@ -58,17 +62,37 @@ public class GoogleTranslationApi {
             url = String.format(BASE_TRANSLATION_URL, query,
                     targetLanguageCode.getLanguageCode(),
                     sourceLanguageCode.getLanguageCode(),
-                    Key.GOOGLE_TRANSLATION_API_KEY);
+                    PropertiesComponent.getInstance().getValue(StorageDataKey.GoogleApiKeyStored), "");
         } catch (IllegalFormatException e) {
             e.printStackTrace();
         }
         if (url == null)
             return null;
 
-        System.out.println("url: " + url);
-        String result = HttpUtils.doHttpGet(url);
-        System.out.println("do get result: " + result);
-        return result;
+        String getResult = HttpUtils.doHttpGet(url);
+        Log.i("do get result: " + getResult);
+
+        JsonObject jsonObject = new JsonParser().parse(getResult).getAsJsonObject();
+        if (jsonObject.get("error") != null) {
+            JsonObject error = jsonObject.get("error").getAsJsonObject().get("errors").getAsJsonArray().get(0).getAsJsonObject();
+            if (error == null)
+                return null;
+
+            if (error.get("reason").getAsString().equals("dailyLimitExceeded"))
+                return new ArrayList<String>();
+            return null;
+        } else {
+            JsonObject data = jsonObject.get("data").getAsJsonObject();
+            JsonArray translations = data.get("translations").getAsJsonArray();
+            if (translations != null) {
+                List<String> result = new ArrayList<String>();
+                for (int i = 0; i < translations.size(); i++) {
+                    result.add(translations.get(i).getAsJsonObject().get("translatedText").getAsString());
+                }
+                return result;
+            }
+        }
+        return null;
     }
 
 }

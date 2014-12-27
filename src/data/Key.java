@@ -20,8 +20,6 @@ package data;
  * Created by Wesley Lin on 11/29/14.
  */
 public class Key {
-    // google
-    public static final String GOOGLE_TRANSLATION_API_KEY = "AIzaSyDRSQOo27pYdt7rkluYsNO_wvwi8bg4gvk";
 
     // bing, clientId and clientSecret can be set by users
     public static final String BING_CLIENT_ID = "android_localizationer";

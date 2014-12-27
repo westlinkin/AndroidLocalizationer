@@ -18,6 +18,7 @@ package data.task;
 
 import action.ConvertToOtherLanguages;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
@@ -29,6 +30,7 @@ import data.SerializeUtil;
 import data.StorageDataKey;
 import language_engine.TranslationEngineType;
 import language_engine.bing.BingTranslationApi;
+import language_engine.google.GoogleTranslationApi;
 import module.AndroidString;
 import module.FilterRule;
 import module.SupportedLanguages;
@@ -45,7 +47,7 @@ import java.util.List;
 /**
  * Created by Wesley Lin on 12/1/14.
  */
-public class GetTranslationTask extends Task.Backgroundable{
+public class GetTranslationTask extends Task.Backgroundable {
 
     private List<SupportedLanguages> selectedLanguages;
     private final List<AndroidString> androidStrings;
@@ -58,6 +60,10 @@ public class GetTranslationTask extends Task.Backgroundable{
             "please check them <html><a href=\"https://datamarket.azure.com/developer/applications\">here</a></html>";
     private static final String BingQuotaExceeded = "Microsoft Translator quota exceeded, " +
             "please check your data usage <html><a href=\"https://datamarket.azure.com/account/datasets\">here</a></html>";
+
+    private static final String GoogleErrorUnknown = "Error, please check API key in the settings panel.";
+    private static final String GoogleDailyLimitError = "Daily Limit Exceeded, please notice Google Translation API " +
+            "is a <html><a href=\"https://cloud.google.com/translate/v2/pricing\">paid service.</a></html>";
 
     private String errorMsg = null;
 
@@ -99,6 +105,7 @@ public class GetTranslationTask extends Task.Backgroundable{
         }
     }
 
+
     @Override
     public void onSuccess() {
         if (errorMsg == null || errorMsg.isEmpty())
@@ -114,6 +121,7 @@ public class GetTranslationTask extends Task.Backgroundable{
                 + "/" + clickedFile.getName();
     }
 
+    // todo: if got error message, should break the background task
     private List<AndroidString> getTranslationEngineResult(@NotNull List<AndroidString> needToTranslatedString,
                                                            @NotNull SupportedLanguages targetLanguageCode,
                                                            @NotNull SupportedLanguages sourceLanguageCode,
@@ -138,7 +146,14 @@ public class GetTranslationTask extends Task.Backgroundable{
                 }
                 break;
             case Google:
-                // todo
+                result = GoogleTranslationApi.getTranslationJSON(querys, targetLanguageCode, sourceLanguageCode);
+                if (result == null) {
+                    errorMsg = GoogleErrorUnknown;
+                    return null;
+                } else if (result.isEmpty() && !querys.isEmpty()) {
+                    errorMsg = GoogleDailyLimitError;
+                    return null;
+                }
                 break;
         }
 
@@ -280,17 +295,19 @@ public class GetTranslationTask extends Task.Backgroundable{
         }
     }
 
-    private static void openFileInEditor(Project myProject, @Nullable final VirtualFile file) {
+    private static void openFileInEditor(final Project myProject, @Nullable final VirtualFile file) {
         if (file == null)
             return;
 
-        // todo: probably not the best practice here
-        try {
-            final FileEditorManager editorManager = FileEditorManager.getInstance(myProject);
-            editorManager.openFile(file, true);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
+        // run in UI thread:
+        //    https://theantlrguy.atlassian.net/wiki/display/~admin/Intellij+plugin+development+notes#Intellijplugindevelopmentnotes-GUIandthreads,backgroundtasks
+        ApplicationManager.getApplication().invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                final FileEditorManager editorManager = FileEditorManager.getInstance(myProject);
+                editorManager.openFile(file, true);
+            }
+        });
     }
 
     private static String getFileContent(List<AndroidString> fileContent) {
