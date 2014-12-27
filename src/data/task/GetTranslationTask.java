@@ -62,7 +62,7 @@ public class GetTranslationTask extends Task.Backgroundable {
             "please check your data usage <html><a href=\"https://datamarket.azure.com/account/datasets\">here</a></html>";
 
     private static final String GoogleErrorUnknown = "Error, please check API key in the settings panel.";
-    private static final String GoogleDailyLimitError = "Daily Limit Exceeded, please notice Google Translation API " +
+    private static final String GoogleDailyLimitError = "Daily Limit Exceeded, please note that Google Translation API " +
             "is a <html><a href=\"https://cloud.google.com/translate/v2/pricing\">paid service.</a></html>";
 
     private String errorMsg = null;
