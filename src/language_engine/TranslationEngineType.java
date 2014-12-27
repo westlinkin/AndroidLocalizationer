@@ -34,9 +34,9 @@ public enum TranslationEngineType {
     }
 
     public static TranslationEngineType[] getLanguageEngineArray() {
-        // todo: for now, type google is not in
         return new TranslationEngineType[]{
                 Bing,
+                Google
         };
     }
 

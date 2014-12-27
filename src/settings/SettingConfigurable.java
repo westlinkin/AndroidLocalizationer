@@ -52,13 +52,45 @@ public class SettingConfigurable implements Configurable, ActionListener {
     private static final String DEFAULT_CLIENT_ID = "Default client id";
     private static final String DEFAULT_CLIENT_SECRET = "Default client secret";
 
+    private static final String DEFAULT_GOOGLE_API_KEY = "Enter API key here";
+
+    private static final String BING_HOW_TO = "<html><a href=\"http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx\">How to get ClientId and ClientSecret?</a></html>";
+    private MouseAdapter bingHowTo = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            try {
+                Desktop.getDesktop().browse(new URI("http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx"));
+            } catch (URISyntaxException e1) {
+                e1.printStackTrace();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+    };
+
+    private static final String GOOGLE_HOW_TO = "<html><a href=\"https://cloud.google.com/translate/v2/getting_started#intro\">How to set up Google Translation API key?</a></html>";
+    private MouseAdapter googleHowTo = new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            try {
+                Desktop.getDesktop().browse(new URI("https://cloud.google.com/translate/v2/getting_started#intro"));
+            } catch (URISyntaxException e1) {
+                e1.printStackTrace();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+    };
+
     private JPanel settingPanel;
     private JComboBox languageEngineBox;
     private TranslationEngineType currentEngine;
 
-    private Container bingContainer;
-    private JTextField bingClientIdField;
-    private JTextField bingClientSecretField;
+    private JLabel howToLabel;
+    private JLabel line1Text;
+    private JTextField line1TextField;
+    private JLabel line2Text;
+    private JTextField line2TextField;
 
     private JBList filterList;
     private JButton btnAddFilter;
@@ -90,7 +122,6 @@ public class SettingConfigurable implements Configurable, ActionListener {
             Container container = new Container();
             container.setLayout(new BorderLayout());
 
-            // todo: only one language engine for now, will add a few more in the future
             currentEngine = TranslationEngineType.fromName(
                     PropertiesComponent.getInstance().getValue(StorageDataKey.SettingLanguageEngine));
             TranslationEngineType[] items = TranslationEngineType.getLanguageEngineArray();
@@ -104,10 +135,7 @@ public class SettingConfigurable implements Configurable, ActionListener {
 
             settingPanel.add(container);
 
-            // todo: at first, only bing, add a function: initUI(TranslationEngineType)
-            initBingContainer();
-            settingPanel.add(bingContainer);
-
+            initContentContainer();
             initAndAddFilterContainer();
         }
         return settingPanel;
@@ -131,28 +159,38 @@ public class SettingConfigurable implements Configurable, ActionListener {
                 boolean bingClientSecretChanged = false;
 
                 if (bingClientIdStored == null) {
-                    if (!bingClientIdField.getText().isEmpty())
+                    if (!line1TextField.getText().isEmpty())
                         bingClientIdChanged = true;
                 } else {
-                    if (!bingClientIdField.getText().equals(bingClientIdStored)
-                            && !bingClientIdField.getText().trim().isEmpty())
+                    if (!line1TextField.getText().equals(bingClientIdStored)
+                            && !line1TextField.getText().trim().isEmpty())
                         bingClientIdChanged = true;
                 }
 
                 if (bingClientSecretStored == null) {
-                    if (!bingClientSecretField.getText().isEmpty())
+                    if (!line2TextField.getText().isEmpty())
                         bingClientSecretChanged = true;
                 } else {
-                    if (!bingClientSecretField.getText().equals(bingClientSecretStored)
-                            && !bingClientSecretField.getText().trim().isEmpty())
+                    if (!line2TextField.getText().equals(bingClientSecretStored)
+                            && !line2TextField.getText().trim().isEmpty())
                         bingClientSecretChanged = true;
                 }
 
                 return bingClientIdChanged || bingClientSecretChanged;
             }
             case Google: {
-                //todo: add google
-                return false;
+                String googleApiKeyStored = propertiesComponent.getValue(StorageDataKey.GoogleApiKeyStored);
+                boolean googleApiKeyStoredChanged = false;
+
+                if (googleApiKeyStored == null) {
+                    if (!line1TextField.getText().isEmpty())
+                        googleApiKeyStoredChanged = true;
+                } else {
+                    if (!line1TextField.getText().equals(googleApiKeyStored)
+                            && !line1TextField.getText().trim().isEmpty())
+                        googleApiKeyStoredChanged = true;
+                }
+                return googleApiKeyStoredChanged;
             }
         }
         return false;
@@ -162,7 +200,8 @@ public class SettingConfigurable implements Configurable, ActionListener {
     public void apply() throws ConfigurationException {
         Log.i("apply clicked");
         if (languageEngineBox == null || filterList == null
-                || btnAddFilter == null || btnDeleteFilter == null)
+                || btnAddFilter == null || btnDeleteFilter == null
+                || line1TextField == null || line2TextField == null)
             return;
 
         PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
@@ -172,24 +211,25 @@ public class SettingConfigurable implements Configurable, ActionListener {
 
         switch (currentEngine) {
             case Bing: {
-                if (bingClientIdField == null || bingClientSecretField == null)
-                    return;
-
-                if (!bingClientIdField.getText().trim().isEmpty()) {
-                    propertiesComponent.setValue(StorageDataKey.BingClientIdStored, bingClientIdField.getText());
-                    PromptSupport.setPrompt(bingClientIdField.getText(), bingClientIdField);
+                if (!line1TextField.getText().trim().isEmpty()) {
+                    propertiesComponent.setValue(StorageDataKey.BingClientIdStored, line1TextField.getText());
+                    PromptSupport.setPrompt(line1TextField.getText(), line1TextField);
                 }
 
-                if (!bingClientSecretField.getText().trim().isEmpty()) {
-                    propertiesComponent.setValue(StorageDataKey.BingClientSecretStored, bingClientSecretField.getText());
-                    PromptSupport.setPrompt(bingClientSecretField.getText(), bingClientSecretField);
+                if (!line2TextField.getText().trim().isEmpty()) {
+                    propertiesComponent.setValue(StorageDataKey.BingClientSecretStored, line2TextField.getText());
+                    PromptSupport.setPrompt(line2TextField.getText(), line2TextField);
                 }
-                bingClientIdField.setText("");
-                bingClientSecretField.setText("");
+                line1TextField.setText("");
+                line2TextField.setText("");
             }
             break;
             case Google: {
-                //todo: add google
+                if (!line1TextField.getText().trim().isEmpty()) {
+                    propertiesComponent.setValue(StorageDataKey.GoogleApiKeyStored, line1TextField.getText());
+                    PromptSupport.setPrompt(line1TextField.getText(), line1TextField);
+                }
+                line1TextField.setText("");
             }
             break;
         }
@@ -211,36 +251,10 @@ public class SettingConfigurable implements Configurable, ActionListener {
                 propertiesComponent.getValue(StorageDataKey.SettingLanguageEngine));
         languageEngineBox.setSelectedItem(currentEngine);
         languageEngineChanged = false;
+        initUI(currentEngine);
+
         Log.i("reset, current engine: " + currentEngine);
 
-        switch (currentEngine) {
-            case Bing: {
-                if (bingClientIdField == null || bingClientSecretField == null)
-                    return;
-
-                String bingClientIdStored = propertiesComponent.getValue(StorageDataKey.BingClientIdStored);
-                String bingClientSecretStored = propertiesComponent.getValue(StorageDataKey.BingClientSecretStored);
-
-                if (bingClientIdStored != null) {
-                    PromptSupport.setPrompt(bingClientIdStored, bingClientIdField);
-                } else {
-                    PromptSupport.setPrompt(DEFAULT_CLIENT_ID, bingClientIdField);
-                }
-                bingClientIdField.setText("");
-
-                if (bingClientSecretStored != null) {
-                    PromptSupport.setPrompt(bingClientSecretStored, bingClientSecretField);
-                } else {
-                    PromptSupport.setPrompt(DEFAULT_CLIENT_SECRET, bingClientSecretField);
-                }
-                bingClientSecretField.setText("");
-            }
-            break;
-            case Google: {
-
-            }
-            break;
-        }
         languageEngineBox.requestFocus();
 
         // filter rules
@@ -257,48 +271,87 @@ public class SettingConfigurable implements Configurable, ActionListener {
     public void actionPerformed(ActionEvent e) {
         JComboBox comboBox = (JComboBox) e.getSource();
         TranslationEngineType type = (TranslationEngineType) comboBox.getSelectedItem();
-        if (type == currentEngine)
+        if ((type == currentEngine) && (!languageEngineChanged))
             return;
 
         languageEngineChanged = true;
         Log.i("selected type: " + type.name());
         currentEngine = type;
 
-        //todo: change other JComponents
-        // currentEngine = ...
-
+        initUI(currentEngine);
     }
 
-    private void initBingContainer() {
-        if (bingContainer != null)
+    private void initUI(TranslationEngineType engineType) {
+        if (settingPanel == null)
             return;
 
-        bingClientIdField = new JTextField();
-        bingClientSecretField = new JTextField();
+        PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
+        switch (engineType) {
+            case Bing: {
+                line1Text.setText("Client Id:");
+                line2Text.setText("Client secret:");
+                line2Text.setVisible(true);
 
-        PromptSupport.setPrompt(DEFAULT_CLIENT_ID, bingClientIdField);
-        PromptSupport.setPrompt(DEFAULT_CLIENT_SECRET, bingClientSecretField);
+                line2TextField.setVisible(true);
 
-        bingContainer = new Container();
-        bingContainer.setLayout(new BorderLayout(0, 5));
+                howToLabel.setText(BING_HOW_TO);
+                howToLabel.removeMouseMotionListener(googleHowTo);
+                howToLabel.addMouseListener(bingHowTo);
 
-        String howto = "<html><a href=\"http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx\">How to get ClientId and ClientSecret?</a></html>";
-        JLabel howtoLabel = new JLabel();
-        howtoLabel.setText(howto);
-        howtoLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        howtoLabel.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                try {
-                    Desktop.getDesktop().browse(new URI("http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx"));
-                } catch (URISyntaxException e1) {
-                    e1.printStackTrace();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                String bingClientIdStored = propertiesComponent.getValue(StorageDataKey.BingClientIdStored);
+                String bingClientSecretStored = propertiesComponent.getValue(StorageDataKey.BingClientSecretStored);
+
+                if (bingClientIdStored != null) {
+                    PromptSupport.setPrompt(bingClientIdStored, line1TextField);
+                } else {
+                    PromptSupport.setPrompt(DEFAULT_CLIENT_ID, line1TextField);
                 }
+                line1TextField.setText("");
+
+                if (bingClientSecretStored != null) {
+                    PromptSupport.setPrompt(bingClientSecretStored, line2TextField);
+                } else {
+                    PromptSupport.setPrompt(DEFAULT_CLIENT_SECRET, line2TextField);
+                }
+                line2TextField.setText("");
             }
-        });
-        bingContainer.add(howtoLabel, BorderLayout.NORTH);
+            break;
+            case Google: {
+                line1Text.setText("API key:");
+                line2Text.setVisible(false);
+
+                line2TextField.setVisible(false);
+
+                howToLabel.setText(GOOGLE_HOW_TO);
+                howToLabel.removeMouseListener(bingHowTo);
+                howToLabel.addMouseListener(googleHowTo);
+
+                String googleAPIKey = propertiesComponent.getValue(StorageDataKey.GoogleApiKeyStored);
+
+                if (googleAPIKey != null) {
+                    PromptSupport.setPrompt(googleAPIKey, line1TextField);
+                } else {
+                    PromptSupport.setPrompt(DEFAULT_GOOGLE_API_KEY, line1TextField);
+                }
+                line1TextField.setText("");
+            }
+            break;
+        }
+    }
+
+    private void initContentContainer() {
+        line1TextField = new JTextField();
+        line2TextField = new JTextField();
+
+        line1Text = new JLabel("Client Id:");
+        line2Text = new JLabel("Client Secret:");
+
+        Container outContainer = new Container();
+        outContainer.setLayout(new BorderLayout(0, 5));
+
+        howToLabel = new JLabel();
+        howToLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        outContainer.add(howToLabel, BorderLayout.NORTH);
 
         Container contentContainer = new Container();
         contentContainer.setLayout(new GridBagLayout());
@@ -307,30 +360,25 @@ public class SettingConfigurable implements Configurable, ActionListener {
         ((GridBagLayout)contentContainer.getLayout()).columnWeights = new double[] {0.0, 0.0, 1.0E-4};
         ((GridBagLayout)contentContainer.getLayout()).rowWeights = new double[] {0.0, 0.0, 1.0E-4};
 
-        contentContainer.add(new JLabel("<html><br></html>"), new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+        line1Text.setHorizontalAlignment(SwingConstants.RIGHT);
+        contentContainer.add(line1Text, new GridBagConstraints(0, 0, 1, 1, 0.5, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets(0, 0, 5, 5), 0, 0));
 
-        JLabel clientIdLabel = new JLabel("Client Id:");
-        clientIdLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        contentContainer.add(clientIdLabel, new GridBagConstraints(0, 0, 1, 1, 0.5, 0.0,
-                GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                new Insets(0, 0, 5, 5), 0, 0));
-
-        contentContainer.add(bingClientIdField, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+        contentContainer.add(line1TextField, new GridBagConstraints(1, 0, 1, 1, 10.0, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets(0, 0, 5, 0), 0, 0));
 
-        JLabel clientSecretLabel = new JLabel("Client Secret:");
-        clientSecretLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        contentContainer.add(clientSecretLabel, new GridBagConstraints(0, 1, 1, 1, 0.5, 0.0,
+        line2Text.setHorizontalAlignment(SwingConstants.RIGHT);
+        contentContainer.add(line2Text, new GridBagConstraints(0, 1, 1, 1, 0.5, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets(0, 0, 0, 5), 0, 0));
-        contentContainer.add(bingClientSecretField, new GridBagConstraints(1, 1, 1, 1, 10.0, 0.0,
+        contentContainer.add(line2TextField, new GridBagConstraints(1, 1, 1, 1, 10.0, 0.0,
                 GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                 new Insets(0, 0, 0, 0), 0, 0));
 
-        bingContainer.add(contentContainer, BorderLayout.CENTER);
+        outContainer.add(contentContainer, BorderLayout.CENTER);
+        settingPanel.add(outContainer);
     }
 
     private void initAndAddFilterContainer() {

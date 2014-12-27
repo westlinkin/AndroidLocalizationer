@@ -31,4 +31,6 @@ public class StorageDataKey {
 
     public static final String SettingFilterRules = "SettingFilterRules";
 
+    public static final String GoogleApiKeyStored = "GoogleAPIKeyStored";
+
 }
