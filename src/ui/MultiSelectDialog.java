@@ -61,7 +61,6 @@ public class MultiSelectDialog extends DialogWrapper {
 
     private PropertiesComponent propertiesComponent;
     protected String myMessage;
-    protected Icon myIcon;
     private MyBorderLayout myLayout;
 
     private JCheckBox myCheckBox;
@@ -79,20 +78,18 @@ public class MultiSelectDialog extends DialogWrapper {
     public MultiSelectDialog(@Nullable Project project,
                              String message,
                              String title,
-                             @Nullable Icon icon,
                              @Nullable String checkboxText,
                              boolean checkboxStatus,
                              TranslationEngineType translationEngineType,
                              boolean canBeParent) {
         super(project, canBeParent);
         data = SupportedLanguages.getAllSupportedLanguages(translationEngineType);
-        _init(project, title, message, icon, checkboxText, checkboxStatus, null);
+        _init(project, title, message, checkboxText, checkboxStatus, null);
     }
 
     protected void _init(Project project,
                          String title,
                          String message,
-                         @Nullable Icon icon,
                          @Nullable String checkboxText,
                          boolean checkboxStatus,
                          @Nullable DoNotAskOption doNotAskOption) {
@@ -102,7 +99,6 @@ public class MultiSelectDialog extends DialogWrapper {
         }
         propertiesComponent = PropertiesComponent.getInstance(project);
         myMessage = message;
-        myIcon = icon;
         myCheckboxText = checkboxText;
         myChecked = checkboxStatus;
         setButtonsAlignment(SwingConstants.RIGHT);
@@ -227,13 +223,7 @@ public class MultiSelectDialog extends DialogWrapper {
 
     protected JComponent doCreateCenterPanel() {
         JPanel panel = new JPanel(new BorderLayout(15, 0));
-        if (myIcon != null) {
-            JLabel iconLabel = new JLabel(myIcon);
-            Container container = new Container();
-            container.setLayout(new BorderLayout());
-            container.add(iconLabel, BorderLayout.NORTH);
-            panel.add(container, BorderLayout.WEST);
-        }
+
         if (myMessage != null) {
             final JTextPane messageComponent = createMessageComponent(myMessage);
 

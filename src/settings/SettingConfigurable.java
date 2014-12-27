@@ -32,6 +32,7 @@ import org.jdesktop.swingx.prompt.PromptSupport;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.Nullable;
 import ui.AddFilterRuleDialog;
+import ui.GoogleAlertDialog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -279,6 +280,12 @@ public class SettingConfigurable implements Configurable, ActionListener {
         currentEngine = type;
 
         initUI(currentEngine);
+
+        // default: false, if user set 'never show', set true
+        boolean GoogleAlertMsgShownSetting = PropertiesComponent.getInstance().getBoolean(StorageDataKey.GoogleAlertMsgShownSetting, false);
+        if (currentEngine == TranslationEngineType.Google && !GoogleAlertMsgShownSetting) {
+            new GoogleAlertDialog(settingPanel, false).show();
+        }
     }
 
     private void initUI(TranslationEngineType engineType) {

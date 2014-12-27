@@ -95,7 +95,6 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
         MultiSelectDialog multiSelectDialog = new MultiSelectDialog(project,
                 String.format(LOCALIZATION_MSG, defaultTranslationEngine.getDisplayName()),
                 LOCALIZATION_TITLE,
-                null,
                 OVERRIDE_EXITS_STRINGS,
                 PropertiesComponent.getInstance(project).getBoolean(StorageDataKey.OverrideCheckBoxStatus, false),
                 defaultTranslationEngine,
