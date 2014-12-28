@@ -27,6 +27,8 @@ to<br>
 	* [How to get Microsoft Translator client id and client secret?](http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx)
 	
 	![img](https://raw.githubusercontent.com/westlinkin/AndroidLocalizationer/master/screen_shot_5.png) 
+	 
+* Set Google API key to use Google Translation API, you need to do [this](https://cloud.google.com/translate/v2/getting_started#intro), at the **Public API access** section of the **Credentials** page, create a new **`Browser key`**. Please **NOTE** that this is a [paid service](https://cloud.google.com/translate/v2/pricing).
 
 More features are coming, please check [Todo](https://github.com/westlinkin/AndroidLocalizationer#todo).
 
