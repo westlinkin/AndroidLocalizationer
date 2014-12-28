@@ -41,6 +41,11 @@ You can download the plugin [here](https://github.com/westlinkin/AndroidLocaliza
 To Install the plugin, please check [IntelliJ IDEA Web Help](https://www.jetbrains.com/idea/help/installing-updating-and-uninstalling-repository-plugins.html#d1282549e185).
 
 ##ChangeLog
+Version 0.1.2
+
+* Add Google Translation API support. Please **NOTE** that this is a [paid service](https://cloud.google.com/translate/v2/pricing).
+* Fix bug: show error when opening the translated strings.xml file
+
 Version 0.1.1
 
 * Fix bug: when translate to more than one language, only the first target language will be translated correctly
@@ -72,7 +77,7 @@ Version 0.0.1
 ##Todo
 * Multiple translation engine
 * Plugin Settings
-	* Choose the translation engine (translation API) you wanna use
+	* <del>Choose the translation engine (translation API) you wanna use
 	* <del>Set translation engine (translation API)'s application key, in case of the API is runing out of quota
 	* <del>Filter the `string` key that you don't wanna translate, e.g. `app_name`, `some_api_key`
 * <del>Only show the `Convert to other languages` in the popup menu when right clicking the string resources, like [Google's Translation Editor](http://tools.android.com/recent/androidstudio087released) does

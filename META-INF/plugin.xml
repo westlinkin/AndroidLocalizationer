@@ -17,7 +17,7 @@
 <idea-plugin version="2">
   <id>com.westlinkin.androidLocalizationer</id>
   <name>Android Localizationer</name>
-  <version>0.1.1</version>
+  <version>0.1.2</version>
   <vendor email="westlinkin@gmail.com" >Wesley Lin</vendor>
 
   <description><![CDATA[
@@ -28,6 +28,12 @@
     ]]></description>
 
   <change-notes><![CDATA[
+      Version 0.1.2
+      <ul>
+        <li>Add Google Translation API support, it is a <b>paid</b> service.</li>
+        <li>Fix bug: show error when opening the translated strings.xml file</li>
+      </ul:>
+
       Version 0.1.1
       <ul>
         <li>Fix bug: when translate to more than one language, only the first target language will be translated correctly</li>
