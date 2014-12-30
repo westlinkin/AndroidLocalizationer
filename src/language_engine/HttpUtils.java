@@ -60,14 +60,14 @@ public class HttpUtils {
         return null;
     }
 
-    public static InputStream doHttpPost(String url, String xmlBody, Header[] headers) {
+    public static String doHttpPost(String url, String xmlBody, Header[] headers) {
         try {
             HttpClient httpClient = new DefaultHttpClient();
             HttpPost httpPost = new HttpPost(url);
             httpPost.setHeaders(headers);
             httpPost.setEntity(new StringEntity(xmlBody, "UTF-8"));
             HttpResponse resp = httpClient.execute(httpPost);
-            return resp.getEntity().getContent();
+            return StreamUtil.readText(resp.getEntity().getContent(), "UTF-8");
         } catch (Exception e) {
             e.printStackTrace();
         }

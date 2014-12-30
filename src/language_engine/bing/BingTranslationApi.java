@@ -19,7 +19,9 @@ package language_engine.bing;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.util.io.StreamUtil;
 import data.Key;
+import data.Log;
 import data.StorageDataKey;
 import language_engine.HttpUtils;
 import module.SupportedLanguages;
@@ -80,6 +82,10 @@ public class BingTranslationApi {
                 "  <To>%s</To>\n" +
                 "</TranslateArrayRequest>";
 
+        for (int i = 0; i < querys.size(); i++) {
+            Log.i("query[" + (i + 1) + "]: " + querys.get(i));
+        }
+
         String xmlBodyStrings = "";
         for (String query : querys) {
             xmlBodyStrings += String.format(xmlBodyMid, query);
@@ -94,7 +100,11 @@ public class BingTranslationApi {
             new BasicHeader("Content-Type", "text/xml")
         };
 
-        InputStream postResult = HttpUtils.doHttpPost(TRANSLATE_URL, xmlBody, headers);
+        Log.i("xml body: " + xmlBody);
+
+        String postResult = HttpUtils.doHttpPost(TRANSLATE_URL, xmlBody, headers);
+        Log.i("post result: " + postResult);
+
         List<TranslateArrayResponse> translateArrayResponses = BingResultParser.parseTranslateArrayResponse(postResult);
 
         List<String> result = new ArrayList<String>();

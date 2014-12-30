@@ -16,8 +16,18 @@
 
 package module;
 
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.events.Attribute;
+import javax.xml.stream.events.EndElement;
+import javax.xml.stream.events.StartElement;
+import javax.xml.stream.events.XMLEvent;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -37,6 +47,9 @@ public class AndroidString {
         this.value = androidString.getValue();
     }
 
+    public AndroidString() {
+    }
+
     public String getKey() {
         return key;
     }
@@ -47,6 +60,10 @@ public class AndroidString {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     @Override
@@ -63,6 +80,55 @@ public class AndroidString {
     private static final String KEY_START = "name=\"";
     private static final String KEY_END = "\">";
     private static final String VALUE_END = "</string>";
+
+    /** @deprecated */
+    public static List<AndroidString> getAndroidStringsList(InputStream xml) {
+        List<AndroidString> result = new ArrayList<AndroidString>();
+
+        try {
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            XMLEventReader eventReader = inputFactory.createXMLEventReader(xml);
+
+            AndroidString androidString = null;
+
+            while (eventReader.hasNext()) {
+                XMLEvent event = eventReader.nextEvent();
+
+                if (event.isStartElement()) {
+                    StartElement startElement = event.asStartElement();
+                    if (startElement.getName().getLocalPart().equals("string")) {
+                        androidString = new AndroidString();
+
+                        Iterator<Attribute> attributes = startElement.getAttributes();
+
+                        while (attributes.hasNext()) {
+                            Attribute attribute = attributes.next();
+                            if (attribute.getName().toString().equals("name")) {
+                                androidString.setKey(attribute.getValue());
+                            }
+                        }
+
+                        event = eventReader.nextEvent();
+                        String value = event.asCharacters().getData().trim();
+
+                        // todo: if the value starts with xml tags(<u>), the value will be empty
+                        androidString.setValue(value);
+                        continue;
+                    }
+                }
+
+                if (event.isEndElement()) {
+                    EndElement endElement = event.asEndElement();
+                    if (endElement.getName().getLocalPart().equals("string")) {
+                        result.add(androidString);
+                    }
+                }
+            }
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
     public static List<AndroidString> getAndroidStringsList(byte[] xmlContentByte) {
         try {
@@ -90,8 +156,8 @@ public class AndroidString {
                         continue;
                     }
 
-                    String key = tokens[i].substring(keyStartIndex, keyEndIndex);
-                    String value = tokens[i].substring(keyEndIndex + KEY_END.length(), valueEndIndex);
+                    String key = tokens[i].substring(keyStartIndex, keyEndIndex).trim();
+                    String value = tokens[i].substring(keyEndIndex + KEY_END.length(), valueEndIndex).trim();
 
                     result.add(new AndroidString(key, value));
                 }

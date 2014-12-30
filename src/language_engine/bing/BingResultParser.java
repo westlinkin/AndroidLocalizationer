@@ -16,6 +16,9 @@
 
 package language_engine.bing;
 
+import com.intellij.openapi.util.io.StreamUtil;
+import sun.nio.cs.StandardCharsets;
+
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -23,7 +26,9 @@ import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -36,12 +41,15 @@ public class BingResultParser {
     static final String From = "From";
     static final String TranslatedText = "TranslatedText";
 
-    public static List<TranslateArrayResponse> parseTranslateArrayResponse(InputStream xml) {
+    public static List<TranslateArrayResponse> parseTranslateArrayResponse(String xml) {
+
+        InputStream stream = new ByteArrayInputStream(xml.getBytes(Charset.forName("UTF-8")));
+
         List<TranslateArrayResponse> result = new ArrayList<TranslateArrayResponse>();
 
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-            XMLEventReader eventReader = inputFactory.createXMLEventReader(xml);
+            XMLEventReader eventReader = inputFactory.createXMLEventReader(stream);
 
             TranslateArrayResponse translateArrayResponse = null;
 
