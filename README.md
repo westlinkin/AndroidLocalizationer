@@ -84,11 +84,12 @@ Version 0.0.1
 	* <del>Filter the `string` key that you don't wanna translate, e.g. `app_name`, `some_api_key`
 * <del>Only show the `Convert to other languages` in the popup menu when right clicking the string resources, like [Google's Translation Editor](http://tools.android.com/recent/androidstudio087released) does
 * Support more source languages
+* Support string arrays
 
 
 ##License
 
-	Copyright 2014 Wesley Lin
+	Copyright 2014-2015 Wesley Lin
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
