@@ -87,9 +87,9 @@ public class ConvertToOtherLanguages extends AnAction implements MultiSelectDial
             e1.printStackTrace();
         }
 
-        for (int i = 0; i < androidStringsInStringFile.size(); i++) {
-            Log.i("[" + (i + 1) + "]: " + androidStringsInStringFile.get(i).toString());
-        }
+//        for (int i = 0; i < androidStringsInStringFile.size(); i++) {
+//            Log.i("[" + (i + 1) + "]: " + androidStringsInStringFile.get(i).toString());
+//        }
 
         if (androidStringsInStringFile == null || androidStringsInStringFile.isEmpty()) {
             showErrorDialog(project, "Target file does not contain any strings.");

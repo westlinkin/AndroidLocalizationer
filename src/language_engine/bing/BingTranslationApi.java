@@ -82,9 +82,9 @@ public class BingTranslationApi {
                 "  <To>%s</To>\n" +
                 "</TranslateArrayRequest>";
 
-        for (int i = 0; i < querys.size(); i++) {
-            Log.i("query[" + (i + 1) + "]: " + querys.get(i));
-        }
+//        for (int i = 0; i < querys.size(); i++) {
+//            Log.i("query[" + (i + 1) + "]: " + querys.get(i));
+//        }
 
         String xmlBodyStrings = "";
         for (String query : querys) {
@@ -100,6 +100,7 @@ public class BingTranslationApi {
             new BasicHeader("Content-Type", "text/xml")
         };
 
+        Log.i("Bearer " + accessToken);
         Log.i("xml body: " + xmlBody);
 
         String postResult = HttpUtils.doHttpPost(TRANSLATE_URL, xmlBody, headers);
