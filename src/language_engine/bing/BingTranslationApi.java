@@ -82,10 +82,6 @@ public class BingTranslationApi {
                 "  <To>%s</To>\n" +
                 "</TranslateArrayRequest>";
 
-//        for (int i = 0; i < querys.size(); i++) {
-//            Log.i("query[" + (i + 1) + "]: " + querys.get(i));
-//        }
-
         String xmlBodyStrings = "";
         for (String query : querys) {
             xmlBodyStrings += String.format(xmlBodyMid, query);
