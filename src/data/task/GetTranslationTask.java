@@ -88,15 +88,23 @@ public class GetTranslationTask extends Task.Backgroundable {
 
             SupportedLanguages language = selectedLanguages.get(i);
 
-            List<AndroidString> translationResult = getTranslationEngineResult(
-                    filterAndroidString(androidStrings, language, override),
-                    language,
-                    SupportedLanguages.English,
-                    translationEngineType
-            );
-            indicator.setFraction(indicatorFractionFrame * (double)(i));
-            indicator.setText("Translating to " + language.getLanguageEnglishDisplayName()
-                    + " (" + language.getLanguageDisplayName() + ")");
+            List<List<AndroidString>> filteredAndSplittedString
+                    = splitAndroidString(filterAndroidString(androidStrings, language, override), translationEngineType);
+
+            List<AndroidString> translationResult = new ArrayList<AndroidString>();
+            for (int j = 0; j < filteredAndSplittedString.size(); j++) {
+                translationResult.addAll(getTranslationEngineResult(
+                        filteredAndSplittedString.get(j),
+                        language,
+                        SupportedLanguages.English,
+                        translationEngineType
+                ));
+
+                indicator.setFraction(indicatorFractionFrame * (double)(i)
+                        + indicatorFractionFrame / filteredAndSplittedString.size() * (double)(j));
+                indicator.setText("Translating to " + language.getLanguageEnglishDisplayName()
+                        + " (" + language.getLanguageDisplayName() + ")");
+            }
 
             String fileName = getValueResourcePath(language);
             List<AndroidString> fileContent = getTargetAndroidStrings(androidStrings, translationResult, fileName, override);
@@ -164,6 +172,35 @@ public class GetTranslationTask extends Task.Backgroundable {
                     needToTranslatedString.get(i).getKey(), result.get(i)));
         }
         return translatedAndroidStrings;
+    }
+
+    private List<List<AndroidString>> splitAndroidString(List<AndroidString> origin, TranslationEngineType engineType) {
+
+        List<List<AndroidString>> splited = new ArrayList<List<AndroidString>>();
+        int splitFragment = 100;
+        switch (engineType) {
+            case Bing:
+                splitFragment = 100;
+                break;
+            case Google:
+                splitFragment = 50;
+                break;
+        }
+
+        if (origin.size() <= splitFragment) {
+            splited.add(origin);
+        } else {
+            int count = (origin.size() % splitFragment == 0) ? (origin.size() / splitFragment) : (origin.size() / splitFragment + 1);
+            for (int i = 1; i <= count; i++) {
+                int end = i * splitFragment;
+                if (end > origin.size()) {
+                    end = origin.size();
+                }
+
+                splited.add(origin.subList((i - 1) * splitFragment, end));
+            }
+        }
+        return splited;
     }
 
     private List<AndroidString> filterAndroidString(List<AndroidString> origin,

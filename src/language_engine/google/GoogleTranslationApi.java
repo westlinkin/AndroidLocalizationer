@@ -20,7 +20,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.intellij.ide.util.PropertiesComponent;
-import data.Log;
 import data.StorageDataKey;
 import language_engine.HttpUtils;
 import module.SupportedLanguages;
@@ -70,7 +69,7 @@ public class GoogleTranslationApi {
             return null;
 
         String getResult = HttpUtils.doHttpGet(url);
-        Log.i("do get result: " + getResult);
+//        Log.i("do get result: " + getResult);
 
         JsonObject jsonObject = new JsonParser().parse(getResult).getAsJsonObject();
         if (jsonObject.get("error") != null) {
