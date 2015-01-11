@@ -18,6 +18,8 @@ package language_engine.bing;
 
 /**
  * Created by Wesley Lin on 12/5/14.
+ *
+ * @deprecated
  */
 public class TranslateArrayResponse {
     private String from = "";

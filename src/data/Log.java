@@ -29,4 +29,14 @@ public class Log {
         }
         System.out.println(out);
     }
+
+    public static void i(Object... params) {
+        if (params == null)
+            return;
+        String out = "";
+        for (int i = 0; i < params.length; i++) {
+            out += params[i].toString() + "\n";
+        }
+        System.out.println(out);
+    }
 }

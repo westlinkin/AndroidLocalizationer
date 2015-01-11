@@ -47,6 +47,20 @@ public class HttpUtils {
         return null;
     }
 
+    public static String doHttpGet(String url, Header[] headers) {
+        try {
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpGet httpGet = new HttpGet(url);
+            httpGet.setHeaders(headers);
+            HttpResponse resp = httpClient.execute(httpGet);
+
+            return StreamUtil.readText(resp.getEntity().getContent(), "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static String doHttpPost(String url, List<NameValuePair> params) {
         try {
             HttpClient httpClient = new DefaultHttpClient();

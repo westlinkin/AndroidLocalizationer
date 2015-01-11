@@ -146,7 +146,7 @@ public class GetTranslationTask extends Task.Backgroundable {
                     errorMsg = BingIdInvalid;
                     return null;
                 }
-                result = BingTranslationApi.getTranslatedStringArrays(accessToken, querys, sourceLanguageCode, targetLanguageCode);
+                result = BingTranslationApi.getTranslatedStringArrays2(accessToken, querys, sourceLanguageCode, targetLanguageCode);
 
                 if ((result == null || result.isEmpty()) && !querys.isEmpty()) {
                     errorMsg = BingQuotaExceeded;
@@ -177,10 +177,10 @@ public class GetTranslationTask extends Task.Backgroundable {
     private List<List<AndroidString>> splitAndroidString(List<AndroidString> origin, TranslationEngineType engineType) {
 
         List<List<AndroidString>> splited = new ArrayList<List<AndroidString>>();
-        int splitFragment = 100;
+        int splitFragment = 50;
         switch (engineType) {
             case Bing:
-                splitFragment = 100;
+                splitFragment = 50;
                 break;
             case Google:
                 splitFragment = 50;
