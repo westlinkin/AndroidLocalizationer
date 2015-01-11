@@ -43,6 +43,13 @@ You can download the plugin [here](https://github.com/westlinkin/AndroidLocaliza
 To Install the plugin, please check [IntelliJ IDEA Web Help](https://www.jetbrains.com/idea/help/installing-updating-and-uninstalling-repository-plugins.html#d1282549e185).
 
 ##ChangeLog
+Version 0.1.3
+
+* Fix bug: translation fails when there are too many string resources
+* Fix bug: translation fails when there are special symbols, like `€`
+* Fix bug: translation fails when there are special tags, like `<u>`
+* Fix Java escape problems in MS Translator
+
 Version 0.1.2
 
 * Add Google Translation API support. Please **NOTE** that this is a [paid service](https://cloud.google.com/translate/v2/pricing).

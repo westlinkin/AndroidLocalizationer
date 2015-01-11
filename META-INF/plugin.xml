@@ -17,7 +17,7 @@
 <idea-plugin version="2">
   <id>com.westlinkin.androidLocalizationer</id>
   <name>Android Localizationer</name>
-  <version>0.1.2</version>
+  <version>0.1.3</version>
   <vendor email="westlinkin@gmail.com" >Wesley Lin</vendor>
 
   <description><![CDATA[
@@ -28,6 +28,14 @@
     ]]></description>
 
   <change-notes><![CDATA[
+      Version 0.1.3
+      <ul>
+        <li>Fix bug: translation fails when there are too many string resources</li>
+        <li>Fix bug: translation fails when there are special symbols, like '€'</li>
+        <li>Fix bug: translation fails when there are special tags, like '<u>'</li>
+        <li>Fix Java escape problems in MS Translator</li>
+      </ul>
+
       Version 0.1.2
       <ul>
         <li>Add Google Translation API support, it is a <b>paid</b> service.</li>
