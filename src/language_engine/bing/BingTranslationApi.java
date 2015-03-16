@@ -19,6 +19,7 @@ package language_engine.bing;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.intellij.ide.util.PropertiesComponent;
 import data.Key;
 import data.Log;
@@ -91,7 +92,12 @@ public class BingTranslationApi {
 
         String getResult = HttpUtils.doHttpGet(url, headers);
 //        Log.i(getResult);
-        JsonArray jsonArray = new JsonParser().parse(getResult).getAsJsonArray();
+        JsonArray jsonArray = null;
+        try {
+            jsonArray = new JsonParser().parse(getResult).getAsJsonArray();
+        } catch (JsonSyntaxException e) {
+            e.printStackTrace();
+        }
         if (jsonArray == null)
             return null;
 
