@@ -136,6 +136,7 @@ public class GetTranslationTask extends Task.Backgroundable {
                                                            TranslationEngineType translationEngineType) {
 
         List<String> querys = AndroidString.getAndroidStringValues(needToTranslatedString);
+//        Log.i(querys.toString());
 
         List<String> result = null;
 
@@ -167,6 +168,8 @@ public class GetTranslationTask extends Task.Backgroundable {
 
         List<AndroidString> translatedAndroidStrings = new ArrayList<AndroidString>();
 
+//        Log.i("needToTranslatedString.size(): " + needToTranslatedString.size(),
+//                "result.size(): " + result.size());
         for (int i = 0; i < needToTranslatedString.size(); i++) {
             translatedAndroidStrings.add(new AndroidString(
                     needToTranslatedString.get(i).getKey(), result.get(i)));

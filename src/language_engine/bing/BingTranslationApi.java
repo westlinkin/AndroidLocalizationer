@@ -82,7 +82,7 @@ public class BingTranslationApi {
      * @return list of String, which is the result
      */
     public static List<String> getTranslatedStringArrays2(String accessToken, List<String> querys, SupportedLanguages from, SupportedLanguages to) {
-//        Log.i(accessToken);
+//        Log.i(querys.toString());
         String url = generateUrl(accessToken, querys, from, to);
         Header[] headers = new Header[]{
                 new BasicHeader("Authorization", "Bearer " + accessToken),
@@ -101,6 +101,7 @@ public class BingTranslationApi {
         if (jsonArray == null)
             return null;
 
+//        Log.i("jsonArray.size: " + jsonArray.size());
         List<String> result = new ArrayList<String>();
         for (int i = 0; i < jsonArray.size(); i++) {
             String translatedText = jsonArray.get(i).getAsJsonObject().get("TranslatedText").getAsString();
@@ -110,6 +111,18 @@ public class BingTranslationApi {
                 result.add(StringEscapeUtils.unescapeJava(translatedText));
             }
         }
+
+        if (querys.size() > result.size()) {
+            for (int i = 0; i < querys.size(); i++) {
+                if (querys.get(i).isEmpty()) {
+                    result.add(i, "");
+                }
+                if (querys.size() == result.size())
+                    break;
+            }
+        }
+        Log.i(result.toString());
+
         return result;
     }
 
@@ -151,7 +164,6 @@ public class BingTranslationApi {
         targetString.append("]");
         return targetString.toString();
     }
-
 
     /**
      * @deprecated
