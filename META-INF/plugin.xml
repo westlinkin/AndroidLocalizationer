@@ -17,7 +17,7 @@
 <idea-plugin version="2">
   <id>com.westlinkin.androidLocalizationer</id>
   <name>Android Localizationer</name>
-  <version>0.1.4</version>
+  <version>0.1.5</version>
   <vendor email="westlinkin@gmail.com" >Wesley Lin</vendor>
 
   <description><![CDATA[
@@ -28,6 +28,12 @@
     ]]></description>
 
   <change-notes><![CDATA[
+      Version 0.1.5
+      <ul>
+        <li>Fix <a href="https://github.com/westlinkin/AndroidLocalizationer/issues/17">issue #17</a></li>
+        <li>Fix <a href="https://github.com/westlinkin/AndroidLocalizationer/issues/1">issue #1</a></li>
+      </ul>
+      
       Version 0.1.4
       <ul>
         <li>Fix <a href="https://github.com/westlinkin/AndroidLocalizationer/issues/13">issue #13</a></li>

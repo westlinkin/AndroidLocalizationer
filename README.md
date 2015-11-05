@@ -43,6 +43,10 @@ You can download the plugin [here](https://github.com/westlinkin/AndroidLocaliza
 To Install the plugin, please check [IntelliJ IDEA Web Help](https://www.jetbrains.com/idea/help/installing-updating-and-uninstalling-repository-plugins.html#d1282549e185).
 
 ##ChangeLog
+Version 0.1.5
+* Fix [issue #17](https://github.com/westlinkin/AndroidLocalizationer/issues/17)
+* Fix [issue #1](https://github.com/westlinkin/AndroidLocalizationer/issues/1)
+
 Version 0.1.4
 
 * Fix [issue #13](https://github.com/westlinkin/AndroidLocalizationer/issues/13)
