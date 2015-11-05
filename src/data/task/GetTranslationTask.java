@@ -311,10 +311,16 @@ public class GetTranslationTask extends Task.Backgroundable {
                 fileExits = false;
                 file.createNewFile();
             }
-            FileWriter fileWriter = new FileWriter(file.getAbsoluteFile());
-            BufferedWriter writer = new BufferedWriter(fileWriter);
-            writer.write(getFileContent(fileContent));
-            writer.close();
+            //Change by GodLikeThomas FIX: Appeared Messy code under windows --start; 
+            //FileWriter fileWriter = new FileWriter(file.getAbsoluteFile());
+            //BufferedWriter writer = new BufferedWriter(fileWriter);
+            //writer.write(getFileContent(fileContent));
+            //writer.close();
+            FileOutputStream fos = new FileOutputStream(file.getAbsoluteFile());
+            OutputStreamWriter osw = new OutputStreamWriter(fos,"UTF-8");
+            osw.write(getFileContent(fileContent));
+            osw.close();
+            //Change by GodLikeThomas FIX: Appeared Messy code under windows --end;
         } catch (IOException e) {
             e.printStackTrace();
         }
