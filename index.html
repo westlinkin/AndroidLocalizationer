@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Android Localizationer by westlinkin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Android Localizationer</h1>
+      <h2 class="project-tagline">This is a Android Studio/ IntelliJ IDEA plugin to localize your Android app, translate your string resources automactically.</h2>
+      <a href="https://github.com/westlinkin/AndroidLocalizationer" class="btn">View on GitHub</a>
+      <a href="https://github.com/westlinkin/AndroidLocalizationer/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/westlinkin/AndroidLocalizationer/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="android-localizationer" class="anchor" href="#android-localizationer" aria-hidden="true"><span class="octicon octicon-link"></span></a>Android Localizationer</h1>
+
+<p>This is a Android Studio/ IntelliJ IDEA plugin to localize your Android app, translate your string resources automactically.</p>
+
+<p>Translate all your strings in your string resources(e.g. <code>strings.xml</code>) to your target languages automactically. Help developers localize their Android app easily, with just one click.</p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Right click the strings resource file, choose 'Convert to other languages'.<br>
+<img src="https://raw.githubusercontent.com/westlinkin/AndroidLocalizationer/master/screen_shot_3.png" alt="img"><br>
+Then check the target languages.<br>
+<img src="https://raw.githubusercontent.com/westlinkin/AndroidLocalizationer/master/screen_shot_2.png" alt="img"> 
+<br>
+After clicking <code>OK</code>, the string resources will be translated and created in the correct value folder.</p>
+
+<h2>
+<a id="feature" class="anchor" href="#feature" aria-hidden="true"><span class="octicon octicon-link"></span></a>Feature</h2>
+
+<ul>
+<li><p>Filter the strings you don't wanna translate by adding <code>NAL_</code> prefix to the <code>string key</code>, case sensitive. Change:<br>
+<code>&lt;string name="flurry_id"&gt;FLURRY_ID&lt;/string&gt;</code><br>
+to<br>
+<code>&lt;string name="NAL_flurry_id"&gt;FLURRY_ID&lt;/string&gt;</code></p></li>
+<li><p>Filter the strings you don't wanna translate by adding <code>filter rule</code> in plugin settings interface</p></li>
+<li>
+<p>Set client id or client secret for Microsoft Translator, in case of running out of quota. </p>
+
+<ul>
+<li><a href="http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx">How to get Microsoft Translator client id and client secret?</a></li>
+</ul>
+
+<p><img src="https://raw.githubusercontent.com/westlinkin/AndroidLocalizationer/master/screen_shot_5.png" alt="img"> </p>
+</li>
+<li><p>Set Google API key to use Google Translation API, you need to do <a href="https://cloud.google.com/translate/v2/getting_started#intro">this</a>, at the <strong>Public API access</strong> section of the <strong>Credentials</strong> page, create a new <strong><code>Browser key</code></strong>. Please <strong>NOTE</strong> that this is a <a href="https://cloud.google.com/translate/v2/pricing">paid service</a>.</p></li>
+</ul>
+
+<p>More features are coming, please check <a href="https://github.com/westlinkin/AndroidLocalizationer#todo">Todo</a>.</p>
+
+<h2>
+<a id="warning" class="anchor" href="#warning" aria-hidden="true"><span class="octicon octicon-link"></span></a>Warning</h2>
+
+<ul>
+<li>Currently, Android Localizationer only support translate <strong>English</strong> to other languages</li>
+<li>The result may <strong>not</strong> meet your standards due to the Translation API that this plugin is using, so keep your string resources <strong>as simple as possible</strong>
+</li>
+</ul>
+
+<h2>
+<a id="downloads" class="anchor" href="#downloads" aria-hidden="true"><span class="octicon octicon-link"></span></a>Downloads</h2>
+
+<p>You can download the plugin <a href="https://github.com/westlinkin/AndroidLocalizationer/raw/master/AndroidLocalizationer.zip">here</a>.</p>
+
+<p>To Install the plugin, please check <a href="https://www.jetbrains.com/idea/help/installing-updating-and-uninstalling-repository-plugins.html#d1282549e185">IntelliJ IDEA Web Help</a>.</p>
+
+<h2>
+<a id="changelog" class="anchor" href="#changelog" aria-hidden="true"><span class="octicon octicon-link"></span></a>ChangeLog</h2>
+
+<p>Version 0.1.4</p>
+
+<ul>
+<li>Fix <a href="https://github.com/westlinkin/AndroidLocalizationer/issues/13">issue #13</a>
+</li>
+<li>Fix <a href="https://github.com/westlinkin/AndroidLocalizationer/issues/15">issue #15</a>
+</li>
+</ul>
+
+<p>Version 0.1.3</p>
+
+<ul>
+<li>Fix bug: translation fails when there are too many string resources</li>
+<li>Fix bug: translation fails when there are special symbols, like <code>€</code>
+</li>
+<li>Fix bug: translation fails when there are special tags, like <code>&lt;u&gt;</code>
+</li>
+<li>Fix Java escape problems in MS Translator</li>
+</ul>
+
+<p>Version 0.1.2</p>
+
+<ul>
+<li>Add Google Translation API support. Please <strong>NOTE</strong> that this is a <a href="https://cloud.google.com/translate/v2/pricing">paid service</a>.</li>
+<li>Fix bug: show error when opening the translated strings.xml file</li>
+</ul>
+
+<p>Version 0.1.1</p>
+
+<ul>
+<li>Fix bug: when translate to more than one language, only the first target language will be translated correctly</li>
+<li>Fix bug: filter rule in plugin settings cannot be filtered</li>
+<li>Fix bug: wrongly show 'Quota exceed' error dialog when both not running out of quota and no strings need to be translated</li>
+</ul>
+
+<p>Version 0.1.0</p>
+
+<ul>
+<li>Add <strong>filter rule</strong> setting in plugin settings interface, filter strings you don't wanna translate</li>
+<li>Fix a possible throwable when automatically open the translated strings.xml file</li>
+</ul>
+
+<p>Version 0.0.3</p>
+
+<ul>
+<li>Only show 'Convert to other languages' menu on <code>strings.xml</code> files, current only <code>strings.xml</code> file under <code>values</code> or <code>values-en</code> folders.* </li>
+<li>Add an icon before 'Convert to other languages' menu* </li>
+<li>Add a plugin settings interface, client id and client secret for Microsoft Translator can be set by users* </li>
+<li>Popup error message when Microsoft Translator quota exceed or client id/ client secret is invalid</li>
+</ul>
+
+<p>Version 0.0.2</p>
+
+<ul>
+<li>Fix string error on the popup dialog</li>
+</ul>
+
+<p>Version 0.0.1</p>
+
+<ul>
+<li>Publish project</li>
+</ul>
+
+<h2>
+<a id="todo" class="anchor" href="#todo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Todo</h2>
+
+<ul>
+<li>Multiple translation engine</li>
+<li>Plugin Settings
+
+<ul>
+<li><del>Choose the translation engine (translation API) you wanna use</del></li>
+<li><del>Set translation engine (translation API)'s application key, in case of the API is runing out of quota</del></li>
+<li><del>Filter the <code>string</code> key that you don't wanna translate, e.g. <code>app_name</code>, <code>some_api_key</code></del></li>
+</ul>
+</li>
+<li><del>Only show the <code>Convert to other languages</code> in the popup menu when right clicking the string resources, like <a href="http://tools.android.com/recent/androidstudio087released">Google's Translation Editor</a> does</del></li>
+<li>Support more source languages</li>
+<li>Support string arrays</li>
+</ul>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<pre><code>Copyright 2014-2015 Wesley Lin
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+</code></pre>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/westlinkin/AndroidLocalizationer">Android Localizationer</a> is maintained by <a href="https://github.com/westlinkin">westlinkin</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
