@@ -105,7 +105,7 @@ Version 0.0.1
 
 ##License
 
-	Copyright 2014-2015 Wesley Lin
+	Copyright 2014-2016 Wesley Lin
 
 	Licensed under the Apache License, Version 2.0 (the "License");
 	you may not use this file except in compliance with the License.
